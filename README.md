@@ -1,0 +1,2 @@
+# scalajs-practices
+ScalaJs Examples
