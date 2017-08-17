@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Scala.js Tutorial</title>
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery/2.1.1/jquery.js"></script>
+</head>
+<body>
+<!--<button id="click-me-button" type="button" onclick="addClickedMessage()">-->
+<button id="click-me-button" type="button">
+    Click me!
+</button>
+<!--Provide-->
+<div id="container"></div>
+<!--Js Files-->
+<!-- Include Scala.js compiled code -->
+<script type="text/javascript" src="./target/scala-2.12/scalajs-test-fastopt.js"></script>
+<!-- Include JavaScript dependencies -->
+<script type="text/javascript" src="./target/scala-2.12/scalajs-test-jsdeps.js"></script>
+
+<script type="text/javascript" src="http://localhost:8080/jasperserver-pro/client/visualize.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Handler for .ready() called.
+        visualize({
+            auth: {
+                name: "superuser",
+                password: "superuser"
+            }
+        }, function (v) {
+            v("#container").report({
+                resource: "/public/Samples/Reports/Call_Handling_Account_Details_Report",
+                error: handleError
+            });
+
+            function handleError(err) {
+                alert(err.message)
+            }
+        })
+    });
+
+
+</script>
+</body>
+</html>
