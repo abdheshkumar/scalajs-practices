@@ -74,8 +74,6 @@ object ProductTable {
         ProductTable((p, s))
       )
     ).build
-
-  import org.scalajs.dom
   val PRODUCTS = List(
     Product("FootBall", 49.99, "Sporting Goods", true),
     Product("Baseball", 9.99, "Sporting Goods", true),
