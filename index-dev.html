@@ -11,35 +11,14 @@
     Click me!
 </button>
 <!--Provide-->
-<div id="container"></div>
+<div id="container1"></div>
+<div id="container2"></div>
 <!--Js Files-->
 <!-- Include Scala.js compiled code -->
 <script type="text/javascript" src="./target/scala-2.12/scalajs-test-fastopt.js"></script>
 <!-- Include JavaScript dependencies -->
 <script type="text/javascript" src="./target/scala-2.12/scalajs-test-jsdeps.js"></script>
 
-<script type="text/javascript" src="http://localhost:8080/jasperserver-pro/client/visualize.js"></script>
-<script type="text/javascript">
-   $(document).ready(function () {
-        // Handler for .ready() called.
-        visualize({
-            auth: {
-                name: "superuser",
-                password: "superuser"
-            }
-        }, function (v) {
-            v("#container").report({
-                resource: "/public/Samples/Reports/Call_Handling_Account_Details_Report",
-                error: handleError
-            });
-
-            function handleError(err) {
-                alert(err.message)
-            }
-        })
-    });
-
-
-</script>
+<script type="text/javascript" src="http://localhost:8080/jasperserver-pro/client/visualize.js?_opt=false"></script>
 </body>
 </html>

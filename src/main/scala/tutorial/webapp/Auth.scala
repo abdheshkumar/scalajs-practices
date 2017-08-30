@@ -10,34 +10,34 @@ sealed trait AuthType extends js.Object {
   //logoutFn: function (properties, request)
 }
 
-@js.native
-trait LoginWithPlainText extends AuthType {
-  val name: String = js.native
-  val password: String = js.native
-  val organization: js.UndefOr[String] = js.undefined
-  val timezone: js.UndefOr[String] = js.undefined
-}
+@ScalaJSDefined
+class LoginWithPlainText(
+                          name: String,
+                          password: String,
+                          organization: js.UndefOr[String],
+                          timezone: js.UndefOr[String],
+                        ) extends AuthType
 
 object LoginWithPlainText {
+  @inline
   def apply(name: String,
             password: String,
             organization: js.UndefOr[String] = js.undefined,
             timezone: js.UndefOr[String] = js.undefined): LoginWithPlainText =
-    js.Dynamic.literal(name = name, password = password, organization = organization, timezone = timezone)
-      .asInstanceOf[LoginWithPlainText]
+    new LoginWithPlainText(name, password, organization, timezone)
 }
 
-@js.native
-trait LoginWithSSOToken extends AuthType {
-  val token: String = js.native
-  val preAuth: js.UndefOr[Boolean] = js.undefined
-  val tokenName: js.UndefOr[String] = js.undefined
-}
+@ScalaJSDefined
+class LoginWithSSOToken(
+                         token: String,
+                         preAuth: js.UndefOr[Boolean],
+                         tokenName: js.UndefOr[String],
+                       ) extends AuthType
 
 object LoginWithSSOToken {
+  @inline
   def apply(token: String,
             preAuth: js.UndefOr[Boolean] = js.undefined,
             tokenName: js.UndefOr[String] = js.undefined): LoginWithSSOToken =
-    js.Dynamic.literal(token = token, preAuth = preAuth, tokenName = tokenName)
-      .asInstanceOf[LoginWithSSOToken]
+    new LoginWithSSOToken(token, preAuth, tokenName)
 }
