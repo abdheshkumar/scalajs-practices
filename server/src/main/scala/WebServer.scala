@@ -26,13 +26,16 @@ object WebServer {
         .result()
 
     val route = pathPrefix("web-app") {
-      getFromDirectory("web-app") //~ getFromDirectory("target")
+      pathEndOrSingleSlash {
+        getFromFile("web-app/index.html")
+      } ~
+        getFromDirectory("web-app")
     }
 
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 9000)
 
-    println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+    println(s"Server online at http://localhost:9000/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port

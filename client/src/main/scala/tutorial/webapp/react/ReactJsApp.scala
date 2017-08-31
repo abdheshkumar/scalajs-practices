@@ -6,7 +6,7 @@ import org.scalajs.dom.document
 
 import scala.scalajs.js.JSApp
 
-object ReactJsApp extends JSApp {
+object ReactJsApp /*extends JSApp*/ {
   val TodoList = ScalaComponent.builder[List[String]]("TodoList")
     .render_P { props =>
       def createItem(itemText: String) = <.li(itemText)
@@ -51,8 +51,8 @@ object ReactJsApp extends JSApp {
     .renderBackend[Backend]
     .build
 
-  override def main(): Unit = {
+  /*override def main(): Unit = {
     TodoApp().renderIntoDOM(document.getElementById("playground"))
-  }
+  }*/
 
 }
