@@ -13,12 +13,13 @@ object Settings {
     "-deprecation",
     "-feature"
   )
+
   /** Declare global dependency versions here to avoid mismatches in multi part dependencies */
   object versions {
     val scala = "2.12.3"
     val scalaDom = "0.9.2"
     val scalajsReact = "1.1.0"
-
+    val scalaTags = "0.6.5"
     val diode = "1.1.2"
     val uTest = "0.4.7"
 
@@ -39,6 +40,9 @@ object Settings {
     "be.doeraene" %%% "scalajs-jquery" % versions.scalaDom,
     "com.github.japgolly.scalajs-react" %%% "core" % versions.scalajsReact,
     "com.github.japgolly.scalajs-react" %%% "extra" % versions.scalajsReact,
+    "io.suzaku" %%% "diode" % versions.diode,
+    "io.suzaku" %%% "diode-react" % versions.diode,
+    "com.lihaoyi" %%% "scalatags" % versions.scalaTags,
     "com.lihaoyi" %%% "utest" % versions.uTest % "test"))
 
   /** Dependencies only used by the JVM project */

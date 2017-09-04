@@ -1,11 +1,9 @@
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.directives.ContentTypeResolver.Default
 import akka.stream.ActorMaterializer
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.server._
-import Directives._
 import scala.io.StdIn
 
 object WebServer {
@@ -16,21 +14,14 @@ object WebServer {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
 
-    implicit def myRejectionHandler =
-      RejectionHandler.newBuilder()
-        .handleNotFound {
-          extractUnmatchedPath { p =>
-            complete((NotFound, s"The path you requested [${p}] does not exist."))
-          }
-        }
-        .result()
-
     val route = pathPrefix("web-app") {
-      pathEndOrSingleSlash {
+      pathPrefix("js") {
+        getFromDirectory("web-app/js")
+      } ~ extractUnmatchedPath { a =>
         getFromFile("web-app/index.html")
-      } ~
-        getFromDirectory("web-app")
+      }
     }
+
 
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 9000)

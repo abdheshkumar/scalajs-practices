@@ -2,5 +2,6 @@
 *.log
 .idea
 target
-*/*.iml
+client/client.iml
+server/server.iml
 project/target
