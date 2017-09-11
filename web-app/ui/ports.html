@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ports</title>
+    <link href="https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.css" rel="stylesheet"
+          type="text/plain"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+    <script type="text/javascript" src="joint.js"></script>
+</head>
+<body>
+<div id="paper-restrict"></div>
+
+<script type="text/javascript">
+    (function () {
+
+        var graph = new joint.dia.Graph;
+        var paper = new joint.dia.Paper({
+            el: $('#paper-restrict'),
+            width: 800, height: 600, gridSize: 1,
+            model: graph,
+            defaultLink: new joint.dia.Link({
+                attrs: {'.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}}
+            }),
+
+            validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+                // Prevent linking from input ports.
+                if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
+                // Prevent linking from output ports to input ports within one element.
+                if (cellViewS === cellViewT) return false;
+
+                // Prevent linking to input ports.
+                var port = magnetS.getAttribute('port');
+                var links = graph.getConnectedLinks(cellViewS.model, {outbound: true});
+                var portLinks = _.filter(links, function (o) {
+                    return o.get('source').port == port;
+                });
+                if (portLinks.length > 1) return false;
+                // Prevent linking to input ports.
+                return magnetT && magnetT.getAttribute('port-group') === 'in';
+            },
+            validateMagnet: function (cellView, magnet) {
+
+                // Prevent linking to input ports.
+                var port = magnet.getAttribute('port');
+                var links = graph.getConnectedLinks(cellView.model, {outbound: true});
+                var portLinks = _.filter(links, function (o) {
+                    console.log("connected")
+                    return o.get('source').port == port;
+                });
+                if (portLinks.length > 1) return false;
+                // Note that this is the default behaviour. Just showing it here for reference.
+                // Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
+                return magnet.getAttribute('magnet') !== 'passive';
+                //return false;
+            },
+            linkPinning: false,
+            markAvailable: false,
+        });
+
+        var m1 = new joint.shapes.devs.Model({
+            position: {x: 50, y: 150},
+            size: {width: 90, height: 90},
+            outPorts: ['out1', 'out2'],
+            ports: {
+                groups: {
+                    'out': {
+                        attrs: {
+                            '.port-body': {
+                                fill: '#E74C3C'
+                            }
+                        }
+                    }
+                }
+            },
+            attrs: {
+                '.label': {text: 'Model1', 'ref-x': .5, 'ref-y': .2},
+                rect: {fill: '#2ECC71'}
+            }
+        });
+
+        var m2 = new joint.shapes.devs.Model({
+            position: {x: 50, y: 50},
+            size: {width: 90, height: 90},
+            inPorts: ['in1'],
+            outPorts: ['out1', 'out2', 'out3'],
+            ports: {
+                groups: {
+                    'in': {
+                        attrs: {
+                            '.port-body': {
+                                fill: '#16A085',
+                                magnet: 'passive'
+                            }
+                        }
+                    },
+                    'out': {
+                        attrs: {
+                            '.port-body': {
+                                fill: '#E74C3C'
+                            }
+                        }
+                    }
+                }
+            },
+            attrs: {
+                '.label': {text: 'Model2', 'ref-x': .5, 'ref-y': .2},
+                rect: {fill: '#2ECC71'}
+            }
+        });
+        m2.translate(300, 0);
+        var m3 = m2.clone();
+        m3.attr('.label/text', 'Model 3');
+        m3.translate(0, 200);
+
+        var m4 = new joint.shapes.devs.Model({
+            position: {x: 50, y: 50},
+            size: {width: 90, height: 90},
+            inPorts: ['in1'],
+            ports: {
+                groups: {
+                    'in': {
+                        attrs: {
+                            '.port-body': {
+                                fill: '#16A085',
+                                magnet: 'passive'
+                            }
+                        }
+                    }
+                }
+            },
+            attrs: {
+                '.label': {text: 'Mode4', 'ref-x': .5, 'ref-y': .2},
+                rect: {fill: '#2ECC71'}
+            }
+        });
+
+        m4.translate(600, 100);
+        graph.addCell(m1);
+        graph.addCell(m2);
+        graph.addCell(m3);
+        graph.addCell(m4);
+
+
+    }());
+
+</script>
+</body>
+</html>

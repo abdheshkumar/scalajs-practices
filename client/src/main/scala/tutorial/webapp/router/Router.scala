@@ -18,6 +18,7 @@ object RouterApp extends JSApp {
         cp(p => HomePage(HomePage.Props(routerCtrl, p)))
       })
         | staticRoute("home", Todo) ~> render(ReactJsApp.TodoApp())
+        | staticRoute("jointjs", JointJs) ~> render(JointJsPage())
         | dynamicRouteCT("item" / int.caseClass[ItemPage]) ~> dynRender({ case ItemPage(i) => ItemPage(ItemPage.Props(i)) })
         | dynamicRouteCT("page" ~ ("/" ~ int).option.caseClass[Page]) ~> render(<.h1("Page!"))
         | InnerPage.routes.prefixPath_/("module").pmap[AppPage](Nested) { case Nested(m) => m })

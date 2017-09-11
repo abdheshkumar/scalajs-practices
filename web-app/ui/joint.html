@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Joint Js</title>
+    <link href="https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.css" rel="stylesheet"
+          type="text/plain"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+    <script type="text/javascript" src="joint.min.js"></script>
+
+</head>
+<body>
+<div id="myholder"></div>
+<div id="myholder-small"></div>
+<script type="text/javascript">
+
+    var graph = new joint.dia.Graph;
+
+    var paper = new joint.dia.Paper({
+        el: $('#myholder'),
+        width: 800,
+        height: 200,
+        model: graph,
+        gridSize: 1
+    });
+
+    var rect = new joint.shapes.basic.Rect({
+        position: {x: 100, y: 30},
+        size: {width: 100, height: 30},
+        attrs: {rect: {fill: 'blue'}, text: {text: 'my box', fill: 'white'}}
+    });
+
+    var rect2 = rect.clone();
+    rect2.translate(200);
+
+    var rect3 = rect.clone();
+    rect3.translate(500);
+
+    var link = new joint.dia.Link({
+        source: {id: rect.id},
+        target: {id: rect2.id}
+    });
+
+    graph.addCells([rect, rect2, link,rect3]);
+
+    rect.on('change:position', function(element) {
+        console.log(element.id, ':', element.get('position'));
+    });
+
+    //paper.scale(.5);
+    //paper.$el.set("#myholder-small")
+</script>
+</body>
+</html>
