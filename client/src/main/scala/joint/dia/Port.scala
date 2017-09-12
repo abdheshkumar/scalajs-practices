@@ -16,17 +16,28 @@ object PortProps {
 }
 
 @ScalaJSDefined
-class AttributesStyle(attrs: js.Dynamic) extends js.Object
+trait AttributesStyle extends js.Object {
+  val attrs: js.Dynamic
+}
 
 object AttributesStyle {
-  def apply(attrs: js.Dynamic): AttributesStyle = new AttributesStyle(attrs)
+  def apply(attrs0: js.Dynamic): AttributesStyle = new AttributesStyle {
+    override val attrs: js.Dynamic = attrs0
+  }
 }
 
 @ScalaJSDefined
-class Group(in: AttributesStyle, out: AttributesStyle) extends js.Object
+trait Group extends js.Object {
+  var in: js.UndefOr[AttributesStyle] = js.undefined
+  var out: js.UndefOr[AttributesStyle] = js.undefined
+}
 
 object Group {
-  def apply(in0: AttributesStyle, out0: AttributesStyle): Group = new Group(in0, out0)
+  def apply(in0: js.UndefOr[AttributesStyle] = js.undefined,
+            out0: js.UndefOr[AttributesStyle] = js.undefined): Group = new Group {
+    in = in0
+    out = out0
+  }
 }
 
 @ScalaJSDefined
