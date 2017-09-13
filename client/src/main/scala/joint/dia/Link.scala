@@ -1,23 +1,16 @@
 package joint.dia
 
 import scala.scalajs.js
-import scala.scalajs.js.UndefOr
 import scala.scalajs.js.annotation.{JSGlobal, ScalaJSDefined}
 
 
 @ScalaJSDefined
-trait LinkProps extends js.Object {
-  val attrs: js.UndefOr[Dynamic]
+trait LinkOptions extends js.Object {
+  var attrs: js.UndefOr[js.Dictionary[Attrs]] = js.undefined
 }
-
-object LinkProps {
-  @inline
-  def apply(attrs0: js.UndefOr[Dynamic]): LinkProps = new LinkProps {
-    override val attrs: UndefOr[Dynamic] = attrs0
-  }
-}
-
 
 @js.native
 @JSGlobal("joint.dia.Link")
-class Link(props: LinkProps) extends js.Object
+class Link(props: LinkOptions) extends js.Object {
+  var port: String = js.native
+}

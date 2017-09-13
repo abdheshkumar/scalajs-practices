@@ -1,41 +1,30 @@
 package joint.dia
 
-import org.scalajs.jquery.{jQuery, _}
+import org.scalajs.jquery._
 
 import scala.scalajs.js
-import scala.scalajs.js.UndefOr
 import scala.scalajs.js.annotation.{JSGlobal, ScalaJSDefined}
 
 @ScalaJSDefined
-trait PaperProps extends js.Object {
+trait PaperOptions extends js.Object {
+  type VCFunction = js.Function6[CellView, Element, CellView, Element, String, LinkView, js.Any]
+  var el: js.UndefOr[JQuery] = js.undefined
+  var width: js.UndefOr[Int] = js.undefined
+  var height: js.UndefOr[Int] = js.undefined
+  var gridSize: js.UndefOr[Int] = js.undefined
+  var model: js.UndefOr[Graph] = js.undefined
+  var markAvailable: js.UndefOr[Boolean] = js.undefined
+  var defaultLink: js.UndefOr[Link] = js.undefined
+  var linkPinning: js.UndefOr[Boolean] = js.undefined
+  var validateConnection: js.UndefOr[VCFunction] = js.undefined
+}
+
+@ScalaJSDefined
+trait A extends js.Object{
   val selector: js.UndefOr[String]
-  val el: js.UndefOr[JQuery]
-  val width: js.UndefOr[Int]
-  val height: js.UndefOr[Int]
-  val gridSize: js.UndefOr[Int]
-  val model: js.UndefOr[Graph]
-  val defaultLink: js.UndefOr[Link]
+  //val el: js.UndefOr[JQuery] = js.undefined
 }
-
-object PaperProps {
-  @inline
-  def apply(selector0: js.UndefOr[String],
-            width0: js.UndefOr[Int],
-            height0: js.UndefOr[Int],
-            gridSize0: js.UndefOr[Int],
-            model0: js.UndefOr[Graph],
-            defaultLink0: js.UndefOr[Link]): PaperProps = new PaperProps {
-    override val defaultLink: UndefOr[Link] = defaultLink0
-    override val gridSize: UndefOr[Int] = gridSize0
-    override val width: UndefOr[Int] = width0
-    override val model: UndefOr[Graph] = model0
-    override val selector: UndefOr[String] = selector0
-    override val height: UndefOr[Int] = height0
-    override val el: UndefOr[JQuery] = jQuery(selector)
-  }
-}
-
 
 @js.native
 @JSGlobal("joint.dia.Paper")
-class Paper(props: PaperProps) extends js.Object
+class Paper(props: PaperOptions) extends js.Object

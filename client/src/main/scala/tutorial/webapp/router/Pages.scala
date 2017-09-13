@@ -6,8 +6,8 @@ import japgolly.scalajs.react.extra.router.{RouterConfigDsl, RouterCtl}
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.{Callback, ScalaComponent}
 import joint.dia._
-import joint.shapes.devs.{Model, ModelProps, Position, Size}
-
+import joint.shapes.devs.{Model, ModelOptions, Position, Size}
+import org.scalajs.jquery._
 import scala.scalajs.js
 
 
@@ -51,41 +51,122 @@ object JointJsPage {
         )
       }
       ).componentDidMount(_ => Callback {
+
+
       val graph = new Graph()
-      new Paper(PaperProps("#paper", 800, 600, 1,
-        graph,
-        new Link(LinkProps(
-          js.Dynamic.literal(attrs = js.Dynamic.literal(".marker-target" -> js.Dynamic.literal("d" -> "M 10 0 L 0 5 L 10 10 z")))))))
+      new Paper(new PaperOptions {
+        el = jQuery("#paper")
+        width = 800
+        height = 600
+        gridSize = 1
+        model = graph
+        defaultLink = new Link(new LinkOptions {
+          attrs = js.Dictionary(".marker-target" -> new Attrs {
+            d = "M 10 0 L 0 5 L 10 10 z"
+          })
+        })
+        markAvailable = true
+        linkPinning = false
+        validateConnection = js.defined((cellViewS, magnetS, cellViewT, magnetT, end, linkView) => {
+          val port = magnetS.getAttribute("port")
+          val links = graph.getConnectedLinks(cellViewS.model, new BoundProps {
+            outbound = true
+          }).filter(_.get("source").port == port)
 
-      val in = AttributesStyle(js.Dynamic.literal(".port-body" -> js.Dynamic.literal("fill" -> "#16A085", "magnet" -> "passive")))
-      val out = AttributesStyle(js.Dynamic.literal(".port-body" -> js.Dynamic.literal("fill" -> "#E74C3C")))
-      val attrs = js.Dynamic.literal(".label" -> js.Dynamic.literal("text" -> "Model 1", "ref-x" -> .5, "ref-y" -> .2),
-        "rect" -> js.Dynamic.literal("fill" -> "#2ECC71"))
+          if (!js.isUndefined(magnetS) && magnetS.getAttribute("port-group") == "in") false
+          else if (links.length > 1) false
+          else !js.isUndefined(magnetT) && magnetT.getAttribute("port-group") == "in"
+        })
+      })
 
-      val m1 = new Model(ModelProps(Position(50, 150), Size(90, 90),
-        outPorts0 = js.Array("out1", "out2"),
-        inPorts0 = js.Array[String](),
-        PortProps(Group(out0 = out)),
-        attrs))
+      val in0 = new AttributesStyle {
+        attrs = js.Dictionary(".port-body" -> new Attrs {
+          fill = "#16A085"
+          magnet = "passive"
+        })
+      }
+      val out0 = new AttributesStyle {
+        attrs = js.Dictionary(".port-body" -> new Attrs {
+          fill = "#E74C3C"
+        })
+      }
+      val attrs0 = js.Dictionary(
+        ".label" -> new Attrs {
+          text = "Model 1"
+          `ref-x` = .5
+          `ref-y` = .2
+        },
+        "rect" -> new Attrs {
+          fill = "#2ECC71"
+        })
 
-      val m2 = new Model(ModelProps(Position(50, 150), Size(90, 90),
-        outPorts0 = js.Array("out1", "out2", "out3"),
-        inPorts0 = js.Array[String]("in1"),
-        PortProps(Group(in, out)),
-        attrs))
-      //val m2 = m1.copy()
+      val m1 = new Model(new ModelOptions {
+        position = new Position {
+          x = 50
+          y = 150
+        }
+        size = new Size {
+          width = 90
+          height = 90
+        }
+        outPorts = js.Array("out1", "out2")
+        inPorts = js.Array[String]()
+        ports = new PortOptions {
+          groups = new Group {
+            out = out0
+          }
+        }
+        attrs = attrs0
+      })
+
+      val m2 = new Model(new ModelOptions {
+        position = new Position {
+          x = 50
+          y = 150
+        }
+        size = new Size {
+          width = 90
+          height = 90
+        }
+        outPorts = js.Array("out1", "out2", "out3")
+        inPorts = js.Array[String]("in1")
+        ports = new PortOptions {
+          groups = new Group {
+            out = out0
+            in = in0
+          }
+        }
+        attrs = attrs0
+      })
+
+
       m2.attr(".label/text", "Model 2")
       m2.translate(300, 0)
       val m3 = m2.copy()
       m3.attr(".label/text", "Model 3")
       m3.translate(0, 200)
 
-      val m4 = new Model(ModelProps(Position(50, 150), Size(90, 90),
-        outPorts0 = js.Array[String](),
-        inPorts0 = js.Array[String]("in1"),
-        PortProps(Group(in0 = in)),
-        attrs))
-      m4.translate(600, 100);
+      val m4 = new Model(new ModelOptions {
+        position = new Position {
+          x = 50
+          y = 150
+        }
+        size = new Size {
+          width = 90
+          height = 90
+        }
+        outPorts = js.Array[String]()
+        inPorts = js.Array("in1")
+        ports = new PortOptions {
+          groups = new Group {
+            in = in0
+          }
+        }
+        attrs = attrs0
+      })
+
+      m4.attr(".label/text", "Model 4")
+      m4.translate(600, 100)
       graph.addCell(m1)
       graph.addCell(m2)
       graph.addCell(m3)

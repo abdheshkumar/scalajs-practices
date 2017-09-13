@@ -1,77 +1,45 @@
 package joint.shapes.devs
 
-import joint.dia.PortProps
+import joint.dia.{Attrs, Link, PortOptions}
 
 import scala.scalajs.js
-import scala.scalajs.js.UndefOr
 import scala.scalajs.js.annotation.{JSGlobal, JSName, ScalaJSDefined}
+
+//you should use "facade" instead of "props", as that's the usual terminology
+//props reminds everyone of React props
 
 @ScalaJSDefined
 trait Size extends js.Object {
-  val width: js.UndefOr[Int]
-  val height: js.UndefOr[Int]
-}
-
-object Size {
-  @inline
-  def apply(width0: Int, height0: Int): Size = new Size {
-    override val width: UndefOr[Int] = width0
-    override val height: UndefOr[Int] = height0
-  }
+  var width: js.UndefOr[Int] = js.undefined
+  var height: js.UndefOr[Int] = js.undefined
 }
 
 @ScalaJSDefined
 trait Position extends js.Object {
-  val x: js.UndefOr[Int]
-  val y: js.UndefOr[Int]
-}
-
-
-object Position {
-  @inline
-  def apply(x0: Int, y0: Int): Position = new Position {
-    override val x: UndefOr[Int] = x0
-    override val y: UndefOr[Int] = y0
-  }
+  var x: js.UndefOr[Int] = js.undefined
+  var y: js.UndefOr[Int] = js.undefined
 }
 
 @js.native
 @JSGlobal("joint.shapes.devs.Model")
-class Model(props: ModelProps) extends js.Object {
+class Model(props: ModelOptions) extends js.Object {
   def translate(x: Int, y: Int): js.native = js.native
 
   @JSName("clone")
   def copy(): Model = js.native
+
+  def get(name: String): Link = js.native
 
   def attr(attrs: String, value: String): js.native = js.native
 }
 
 
 @ScalaJSDefined
-trait ModelProps extends js.Object {
-  val position: js.UndefOr[Position]
-  val size: js.UndefOr[Size]
-  val outPorts: js.UndefOr[js.Array[String]]
-  val inPorts: js.UndefOr[js.Array[String]]
-  val ports: js.UndefOr[PortProps]
-  val attrs: js.UndefOr[js.Dynamic]
-
-}
-
-object ModelProps {
-  @inline
-  def apply(position0: js.UndefOr[Position],
-            size0: js.UndefOr[Size],
-            outPorts0: js.UndefOr[js.Array[String]],
-            inPorts0: js.UndefOr[js.Array[String]],
-            ports0: js.UndefOr[PortProps],
-            attrs0: js.UndefOr[js.Dynamic]): ModelProps = new ModelProps {
-    override val ports: UndefOr[PortProps] = ports0
-    override val outPorts: UndefOr[js.Array[String]] = outPorts0
-    override val attrs: UndefOr[js.Dynamic] = attrs0
-    override val size: UndefOr[Size] = size0
-    override val inPorts: UndefOr[js.Array[String]] = inPorts0
-    override val position: UndefOr[Position] = position0
-  }
-
+trait ModelOptions extends js.Object {
+  var position: js.UndefOr[Position] = js.undefined
+  var size: js.UndefOr[Size] = js.undefined
+  var outPorts: js.UndefOr[js.Array[String]] = js.undefined
+  var inPorts: js.UndefOr[js.Array[String]] = js.undefined
+  var ports: js.UndefOr[PortOptions] = js.undefined
+  var attrs: js.UndefOr[js.Dictionary[Attrs]] = js.undefined
 }
