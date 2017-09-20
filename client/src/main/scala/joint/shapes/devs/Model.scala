@@ -31,6 +31,16 @@ class Model(props: ModelOptions) extends js.Object {
   def get(name: String): Link = js.native
 
   def attr(attrs: String, value: String): js.native = js.native
+
+  def toJSON(): Model = js.native
+
+  def addInPort(port: String, opt: js.UndefOr[js.Any] = js.undefined): Model = js.native
+
+  def addOutPort(port: String, opt: js.UndefOr[js.Any] = js.undefined): Model = js.native
+
+  def removeOutPort(port: String, opt: js.UndefOr[js.Any] = js.undefined): Model = js.native
+
+  def removeInPort(port: String, opt: js.UndefOr[js.Any] = js.undefined): Model = js.native
 }
 
 

@@ -9,4 +9,6 @@ import scala.scalajs.js.annotation.JSGlobal
 @JSGlobal("joint.dia.CellView")
 class CellView() extends js.Object {
   var model: Model = js.native
+
+  def get(`type`: String): String = js.native
 }

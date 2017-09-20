@@ -8,15 +8,48 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
-    <script type="text/javascript" src="joint.js"></script>
+    <script type="text/javascript" src="../js/joint.js"></script>
 </head>
 <body>
 <div id="paper-restrict"></div>
+<button onclick="getJson()">Click</button>
 
 <script type="text/javascript">
+    var constraint = g.ellipse(g.point(200, 150), 100, 80);
+
+    var graph = new joint.dia.Graph;
+    var m1 = new joint.shapes.devs.Model({
+        position: {x: 626, y: 253},
+        size: {width: 90, height: 90},
+        outPorts: ['out1', 'out2'],
+        ports: {
+            groups: {
+                'out': {
+                    attrs: {
+                        '.port-body': {
+                            fill: '#E74C3C'
+                        }
+                    }
+                }
+            }
+        },
+        attrs: {
+            '.label': {text: 'Model1', 'ref-x': .5, 'ref-y': .2},
+            rect: {fill: '#2ECC71'}
+        }
+    });
+
+    function getJson() {
+        var newModel = m1.clone();
+        //var newConnection = link(elementView.model, newModel);
+        graph.addCells([newModel]);
+        console.log(graph.toJSON());
+    }
+
+
     (function () {
 
-        var graph = new joint.dia.Graph;
+
         var paper = new joint.dia.Paper({
             el: $('#paper-restrict'),
             width: 800, height: 600, gridSize: 1,
@@ -60,26 +93,22 @@
             markAvailable: false,
         });
 
-        var m1 = new joint.shapes.devs.Model({
-            position: {x: 50, y: 150},
-            size: {width: 90, height: 90},
-            outPorts: ['out1', 'out2'],
-            ports: {
-                groups: {
-                    'out': {
-                        attrs: {
-                            '.port-body': {
-                                fill: '#E74C3C'
-                            }
-                        }
-                    }
-                }
-            },
-            attrs: {
-                '.label': {text: 'Model1', 'ref-x': .5, 'ref-y': .2},
-                rect: {fill: '#2ECC71'}
-            }
+        // A helper to create an arrow connection
+        function link(source, target) {
+            return new joint.shapes.org.Arrow({
+                source: {id: source.id},
+                target: {id: target.id}
+            });
+        }
+
+        paper.on('cell:pointerclick', function (elementView, evt, x, y) {
+            console.log(elementView.model.toJSON())
+            //var newModel = m1.clone();
+            //var newConnection = link(elementView.model, newModel);
+            //graph.addCells([newModel, newConnection]);
+            //graph.addCell();
         });
+
 
         var m2 = new joint.shapes.devs.Model({
             position: {x: 50, y: 50},
@@ -110,13 +139,53 @@
                 rect: {fill: '#2ECC71'}
             }
         });
+        console.log(m2.attributes);
+        m2.addInPort("in2");
+        var m5 = new joint.shapes.devs.Model({
+            markup: '<g class="rotatable"><g class="scalable"><ellipse/></g><text/></g>',
+            position: {x: 50, y: 150},
+            size: {width: 90, height: 60},
+            outPorts: ['out1'],
+            ports: {
+                groups: {
+                    'out': {
+                        attrs: {
+                            '.port-body': {
+                                fill: '#E74C3C'
+                            }
+                        }
+                    }
+                }
+            },
+            attrs: {
+                ellipse: {
+                    fill: '#ffffff',
+                    stroke: '#000000',
+                    rx: 30,
+                    ry: 20,
+                    cx: 30,
+                    cy: 20
+                },
+                'text': {
+                    'font-size': 14,
+                    text: 'Entry',
+                    'text-anchor': 'middle',
+                    'ref-x': .5,
+                    'ref-y': .5,
+                    'y-alignment': 'middle',
+                    fill: '#000000',
+                    'font-family': 'Arial, helvetica, sans-serif'
+                }
+            }
+        });
+
+
         m2.translate(300, 0);
         var m3 = m2.clone();
         m3.attr('.label/text', 'Model 3');
         m3.translate(0, 200);
 
         var m4 = new joint.shapes.devs.Model({
-            position: {x: 50, y: 50},
             size: {width: 90, height: 90},
             inPorts: ['in1'],
             ports: {
@@ -137,11 +206,29 @@
             }
         });
 
-        m4.translate(600, 100);
+        var ellipse = new joint.shapes.basic.Ellipse({
+            attrs: {
+                'text': {
+                    'font-size': 14,
+                    text: 'fdsgdfgdfg',
+                    'text-anchor': 'middle',
+                    'ref-x': .5,
+                    'ref-y': .5,
+                    'y-alignment': 'middle',
+                    fill: '#000000',
+                    'font-family': 'Arial, helvetica, sans-serif'
+                }
+            }
+        });
+        //ellipse.attr('attrs/text/text', 'Model 3');
+        m4.translate(633, 56);
+        //m5.translate(600, 200);
         graph.addCell(m1);
         graph.addCell(m2);
         graph.addCell(m3);
         graph.addCell(m4);
+        graph.addCell(m5);
+        graph.addCell(ellipse);
 
 
     }());

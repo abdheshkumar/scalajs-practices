@@ -29,9 +29,9 @@ object Settings {
 
   /** Dependencies for external JS libs that are bundled into a single .js file according to dependency order */
   val jsDependencies = Def.setting(Seq(
-    "org.webjars.bower" % "react" % versions.react / "react-with-addons.js" minified "react-with-addons.min.js" commonJSName "React",
-    "org.webjars.bower" % "react" % versions.react / "react-dom.js" minified "react-dom.min.js" dependsOn "react-with-addons.js" commonJSName "ReactDOM",
-    "org.webjars.bower" % "react" % versions.react / "react-dom-server.js" minified "react-dom-server.min.js" dependsOn "react-dom.js" commonJSName "ReactDOMServer"
+    //"org.webjars.bower" % "react" % versions.react / "react-with-addons.js" minified "react-with-addons.min.js" commonJSName "React",
+    //"org.webjars.bower" % "react" % versions.react / "react-dom.js" minified "react-dom.min.js" dependsOn "react-with-addons.js" commonJSName "ReactDOM",
+    //"org.webjars.bower" % "react" % versions.react / "react-dom-server.js" minified "react-dom-server.min.js" dependsOn "react-dom.js" commonJSName "ReactDOMServer"
   ))
 
   /** Dependencies only used by the JVM project */
@@ -43,6 +43,7 @@ object Settings {
     "io.suzaku" %%% "diode" % versions.diode,
     "io.suzaku" %%% "diode-react" % versions.diode,
     "com.lihaoyi" %%% "scalatags" % versions.scalaTags,
+    "com.olvind" %%% "scalajs-react-components" % "0.8.0",
     "com.lihaoyi" %%% "utest" % versions.uTest % "test"))
 
   /** Dependencies only used by the JVM project */

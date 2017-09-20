@@ -27,8 +27,8 @@ object AnimationApp {
       p.transitionLeaveTimeout = 300
 
       <.div(
-        <.button(^.onClick --> handleAdd, "Add Item"),
-        CSSTransitionGroup(p)(items.toVdomArray))
+        <.button(^.onClick --> handleAdd, "Add Item")/*,
+        CSSTransitionGroup(p)(items.toVdomArray)*/)
     }
   }
 

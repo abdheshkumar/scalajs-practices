@@ -3,12 +3,18 @@ package tutorial.webapp.router
 
 import diode.react.ModelProxy
 import japgolly.scalajs.react.extra.router.{RouterConfigDsl, RouterCtl}
+import japgolly.scalajs.react.vdom.TagOf
 import japgolly.scalajs.react.vdom.html_<^._
-import japgolly.scalajs.react.{Callback, ScalaComponent}
+import japgolly.scalajs.react.{BackendScope, Callback, _}
+import joint.MuiDialogDemo
 import joint.dia._
 import joint.shapes.devs.{Model, ModelOptions, Position, Size}
+import org.scalajs.dom
+import org.scalajs.dom.html.Div
 import org.scalajs.jquery._
+
 import scala.scalajs.js
+import scala.scalajs.js.JSON
 
 
 sealed trait AppPage
@@ -42,19 +48,13 @@ object InnerPage {
 }
 
 object JointJsPage {
-  private val component =
-    ScalaComponent.builder[Unit]("JointJsPage")
-      .render_({
-        <.div(
-          <.div(s"JointJs-React Template"),
-          <.div(^.id := "paper", "")
-        )
-      }
-      ).componentDidMount(_ => Callback {
 
+  class Backend($: BackendScope[Unit, Unit]) {
 
-      val graph = new Graph()
-      new Paper(new PaperOptions {
+    val graph = new Graph()
+
+    def buildGraph() = {
+      val paper = new Paper(new PaperOptions {
         el = jQuery("#paper")
         width = 800
         height = 600
@@ -79,6 +79,15 @@ object JointJsPage {
         })
       })
 
+      graph.on("add", (cell) => {
+        dom.console.log(":add::::" + cell.get("type"))
+      })
+      paper.on("cell:pointerclick", (cellView, event, _, _) => {
+        dom.console.log(cellView.model.toJSON())
+        cellView.model.addInPort("in3")
+        //val model = cellView.model.getPorts()
+        dom.console.log(event)
+      })
       val in0 = new AttributesStyle {
         attrs = js.Dictionary(".port-body" -> new Attrs {
           fill = "#16A085"
@@ -106,10 +115,10 @@ object JointJsPage {
           y = 150
         }
         size = new Size {
-          width = 90
-          height = 90
+          width = 200
+          height = 100
         }
-        outPorts = js.Array("out1", "out2")
+        outPorts = js.Array("out1", "out2", "out3", "out4", "out5")
         inPorts = js.Array[String]()
         ports = new PortOptions {
           groups = new Group {
@@ -171,6 +180,26 @@ object JointJsPage {
       graph.addCell(m2)
       graph.addCell(m3)
       graph.addCell(m4)
+    }
+
+    def getJson(): CallbackTo[Unit] = Callback {
+      dom.console.log(JSON.stringify(graph.toJSON))
+    }
+
+    def render: TagOf[Div] = {
+      <.div(
+        <.div(s"JointJs-React Template"),
+        <.div(^.id := "paper", ""),
+        //MuiDialogDemo(),
+        <.button("Get Json", ^.onClick --> getJson)
+      )
+    }
+  }
+
+  private val component = ScalaComponent.builder[Unit]("JointJsPage")
+    .renderBackend[Backend]
+    .componentDidMount(_f => Callback {
+      _f.backend.buildGraph()
     }).build
 
   def apply(): VdomElement = component()

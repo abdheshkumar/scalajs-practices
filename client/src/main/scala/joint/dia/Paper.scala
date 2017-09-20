@@ -19,12 +19,9 @@ trait PaperOptions extends js.Object {
   var validateConnection: js.UndefOr[VCFunction] = js.undefined
 }
 
-@ScalaJSDefined
-trait A extends js.Object{
-  val selector: js.UndefOr[String]
-  //val el: js.UndefOr[JQuery] = js.undefined
-}
 
 @js.native
 @JSGlobal("joint.dia.Paper")
-class Paper(props: PaperOptions) extends js.Object
+class Paper(props: PaperOptions) extends js.Object {
+  def on(evenName: String, fun: js.Function4[CellView, js.Any, Int, Int, _]): js.Any = js.native
+}

@@ -30,9 +30,15 @@ lazy val client: Project = (project in file("client"))
     artifactPath in(Test, fastOptJS) := file("web-app/js/app.test.js"),
     artifactPath in(Test, fullOptJS) := file("web-app/js/app.min.test.js"),
     artifactPath in(Test, packageJSDependencies) := file("web-app/js/deps.test.js"),
-    artifactPath in(Test, packageMinifiedJSDependencies) := file("web-app/js/deps.min.test.js")
+    artifactPath in(Test, packageMinifiedJSDependencies) := file("web-app/js/deps.min.test.js"),
+    npmDependencies in Compile ++= Seq(
+      "material-ui" -> "0.19.2",
+      "react" -> "15.6.0",
+      "react-dom" -> "15.6.0"
+    )
   )
   .enablePlugins(ScalaJSPlugin)
+  .enablePlugins(ScalaJSBundlerPlugin)
   .dependsOn(sharedJS)
 
 
