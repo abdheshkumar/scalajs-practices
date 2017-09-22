@@ -1,12 +1,12 @@
 package tutorial.webapp.router
 
-
+import chandu0101.scalajs.react.components.materialui.{MuiDialog, MuiFlatButton, MuiMuiThemeProvider, TouchTapEvent}
 import diode.react.ModelProxy
 import japgolly.scalajs.react.extra.router.{RouterConfigDsl, RouterCtl}
 import japgolly.scalajs.react.vdom.TagOf
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.{BackendScope, Callback, _}
-import joint.MuiDialogDemo
+import joint.CallbackDebug
 import joint.dia._
 import joint.shapes.devs.{Model, ModelOptions, Position, Size}
 import org.scalajs.dom
@@ -42,14 +42,16 @@ object InnerPage {
     import dsl._
     (emptyRule
       | staticRoute(root, InnerPageRoot) ~> render(<.h1("Module Root page"))
-      | staticRoute("detail", InnerPageDetail) ~> render(<.h1("Module Detail"))
+      | staticRoute("#detail", InnerPageDetail) ~> render(<.h1("Module Detail"))
       )
   }
 }
 
 object JointJsPage {
 
-  class Backend($: BackendScope[Unit, Unit]) {
+  case class State(isOpen: Boolean, cellView: js.UndefOr[CellView])
+
+  class Backend($: BackendScope[Unit, State]) {
 
     val graph = new Graph()
 
@@ -79,14 +81,11 @@ object JointJsPage {
         })
       })
 
-      graph.on("add", (cell) => {
+      /*graph.on("add", (cell) => {
         dom.console.log(":add::::" + cell.get("type"))
-      })
+      })*/
       paper.on("cell:pointerclick", (cellView, event, _, _) => {
-        dom.console.log(cellView.model.toJSON())
-        cellView.model.addInPort("in3")
-        //val model = cellView.model.getPorts()
-        dom.console.log(event)
+        open(cellView)
       })
       val in0 = new AttributesStyle {
         attrs = js.Dictionary(".port-body" -> new Attrs {
@@ -182,21 +181,59 @@ object JointJsPage {
       graph.addCell(m4)
     }
 
-    def getJson(): CallbackTo[Unit] = Callback {
-      dom.console.log(JSON.stringify(graph.toJSON))
+    private def open(cellView: CellView) = {
+      ($.setState(State(true, cellView)) >> Callback.log("Dialog Open")).runNow()
     }
 
-    def render: TagOf[Div] = {
+    def getJson(cellView: js.UndefOr[CellView]): CallbackTo[Unit] = Callback {
+      dom.console.log(JSON.stringify(cellView.map(_.model).getOrElse("")))
+    }
+
+
+    val close = $.modState(_.copy(isOpen = false))
+
+    def handleDialogCancel: TouchTapEvent => Callback =
+      e => close >> Callback.info("Cancel Clicked")
+
+    def handleDialogSubmit(cellView: js.UndefOr[CellView]): TouchTapEvent => Callback =
+      e => close >> Callback.info("Submit Clicked") >> Callback {
+        cellView.map(_.model.addInPort("Added"))
+      }
+
+    def render(S: State): TagOf[Div] = {
+      val actions: VdomNode = js.Array(
+        MuiFlatButton(key = "1",
+          label = "Cancel",
+          secondary = true,
+          onTouchTap = handleDialogCancel)(),
+        MuiFlatButton(key = "2",
+          label = "Submit",
+          secondary = true,
+          onTouchTap = handleDialogSubmit(S.cellView))()
+      ).toVdomArray
+
       <.div(
         <.div(s"JointJs-React Template"),
         <.div(^.id := "paper", ""),
-        //MuiDialogDemo(),
-        <.button("Get Json", ^.onClick --> getJson)
+        MuiMuiThemeProvider()(
+          <.div(
+            MuiDialog(
+              title = "Dialog With Actions",
+              actions = actions,
+              open = S.isOpen,
+              onRequestClose = CallbackDebug.f1("onRequestClose")
+            )(
+              DialogContent(DialogContent.Props(S.cellView))
+            )
+          )
+        ),
+        <.button(^.onClick --> getJson(S.cellView), "Get Json")
       )
     }
   }
 
   private val component = ScalaComponent.builder[Unit]("JointJsPage")
+    .initialState(State(isOpen = false, js.undefined))
     .renderBackend[Backend]
     .componentDidMount(_f => Callback {
       _f.backend.buildGraph()
