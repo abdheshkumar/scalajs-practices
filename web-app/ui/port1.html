@@ -61,7 +61,7 @@
                 // Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
                 return magnet.getAttribute('magnet') !== 'passive';
             },
-            snapLinks: { radius: 75 },
+            snapLinks: {radius: 75},
             markAvailable: true,
             linkPinning: false
         });
@@ -116,6 +116,7 @@
                 rect: {fill: '#2ECC71'}
             }
         });
+
         m2.translate(300, 0);
         var m3 = m2.clone();
         m3.attr('.label/text', 'Model 3');
@@ -142,7 +143,7 @@
                 rect: {fill: '#2ECC71'}
             }
         });
-
+        console.log(m4.attributes);
         m4.translate(600, 100);
         graph.addCell(m1);
         graph.addCell(m2);

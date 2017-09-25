@@ -8,13 +8,15 @@ import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.{BackendScope, Callback, _}
 import joint.CallbackDebug
 import joint.dia._
-import joint.shapes.devs.{Model, ModelOptions, Position, Size}
+import joint.shapes.basic.Rect
+import joint.shapes.devs.{Model, ModelOptions}
 import org.scalajs.dom
 import org.scalajs.dom.html.Div
 import org.scalajs.jquery._
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
+import scala.util.Random
 
 
 sealed trait AppPage
@@ -81,33 +83,33 @@ object JointJsPage {
         })
       })
 
-      /*graph.on("add", (cell) => {
-        dom.console.log(":add::::" + cell.get("type"))
-      })*/
+
       paper.on("cell:pointerclick", (cellView, event, _, _) => {
         open(cellView)
       })
-      val in0 = new AttributesStyle {
-        attrs = js.Dictionary(".port-body" -> new Attrs {
+      val in0 = new Attrs {
+        portBody = new AttrStyle {
           fill = "#16A085"
           magnet = "passive"
-        })
+        }
       }
-      val out0 = new AttributesStyle {
-        attrs = js.Dictionary(".port-body" -> new Attrs {
+
+      val out0 = new Attrs {
+        portBody = new AttrStyle {
           fill = "#E74C3C"
-        })
+        }
       }
-      val attrs0 = js.Dictionary(
-        ".label" -> new Attrs {
+
+      val attrs0 = new Attrs {
+        label = new AttrStyle {
           text = "Model 1"
           `ref-x` = .5
           `ref-y` = .2
-        },
-        "rect" -> new Attrs {
+        }
+        rect = new AttrStyle {
           fill = "#2ECC71"
-        })
-
+        }
+      }
       val m1 = new Model(new ModelOptions {
         position = new Position {
           x = 50
@@ -120,8 +122,10 @@ object JointJsPage {
         outPorts = js.Array("out1", "out2", "out3", "out4", "out5")
         inPorts = js.Array[String]()
         ports = new PortOptions {
-          groups = new Group {
-            out = out0
+          groups = new GroupOptions {
+            out = new Options {
+              attrs = out0
+            }
           }
         }
         attrs = attrs0
@@ -139,9 +143,13 @@ object JointJsPage {
         outPorts = js.Array("out1", "out2", "out3")
         inPorts = js.Array[String]("in1")
         ports = new PortOptions {
-          groups = new Group {
-            out = out0
-            in = in0
+          groups = new GroupOptions {
+            out = new Options {
+              attrs = out0
+            }
+            in = new Options {
+              attrs = in0
+            }
           }
         }
         attrs = attrs0
@@ -166,19 +174,29 @@ object JointJsPage {
         outPorts = js.Array[String]()
         inPorts = js.Array("in1")
         ports = new PortOptions {
-          groups = new Group {
-            in = in0
+          groups = new GroupOptions {
+            in = new Options {
+              attrs = in0
+            }
           }
         }
         attrs = attrs0
       })
 
+      val r = new Rect(new Options {
+        attrs = new Attrs {
+          text = new AttrStyle {
+            text = "Rect Model"
+          }
+        }
+      })
+
       m4.attr(".label/text", "Model 4")
       m4.translate(600, 100)
-      graph.addCell(m1)
-      graph.addCell(m2)
-      graph.addCell(m3)
-      graph.addCell(m4)
+      graph.addCell[ModelOptions, Model](m1)
+      graph.addCell[ModelOptions, Model](m2)
+      graph.addCell[ModelOptions, Model](m3)
+      graph.addCell[ModelOptions, Model](m4)
     }
 
     private def open(cellView: CellView) = {
@@ -201,6 +219,7 @@ object JointJsPage {
       }
 
     def render(S: State): TagOf[Div] = {
+      dom.console.log(S.cellView.map(_.model))
       val actions: VdomNode = js.Array(
         MuiFlatButton(key = "1",
           label = "Cancel",
@@ -211,9 +230,9 @@ object JointJsPage {
           secondary = true,
           onTouchTap = handleDialogSubmit(S.cellView))()
       ).toVdomArray
-
+      val r = Random.nextInt()
       <.div(
-        <.div(s"JointJs-React Template"),
+        <.div(s"JointJs-React Template ${r}"),
         <.div(^.id := "paper", ""),
         MuiMuiThemeProvider()(
           <.div(

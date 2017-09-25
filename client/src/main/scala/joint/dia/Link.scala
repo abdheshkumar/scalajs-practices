@@ -12,5 +12,6 @@ trait LinkOptions extends js.Object {
 @js.native
 @JSGlobal("joint.dia.Link")
 class Link(props: LinkOptions) extends js.Object {
-  var port: String = js.native
+  val port: String = js.native
+  val attributes: LinkOptions = js.native
 }

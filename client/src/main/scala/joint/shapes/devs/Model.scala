@@ -1,36 +1,19 @@
 package joint.shapes.devs
 
-import joint.dia.{Attrs, Link, PortOptions}
+import joint.dia.{Link, Options, PortOptions}
+import joint.shapes.basic.Generic
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSGlobal, JSName, ScalaJSDefined}
-
-//you should use "facade" instead of "props", as that's the usual terminology
-//props reminds everyone of React props
-
-@ScalaJSDefined
-trait Size extends js.Object {
-  var width: js.UndefOr[Int] = js.undefined
-  var height: js.UndefOr[Int] = js.undefined
-}
-
-@ScalaJSDefined
-trait Position extends js.Object {
-  var x: js.UndefOr[Int] = js.undefined
-  var y: js.UndefOr[Int] = js.undefined
-}
+import scala.scalajs.js.annotation.{JSGlobal, ScalaJSDefined}
 
 @js.native
 @JSGlobal("joint.shapes.devs.Model")
-class Model(props: ModelOptions) extends js.Object {
+class Model(props: ModelOptions) extends Generic[ModelOptions, Model] {
   def translate(x: Int, y: Int): js.native = js.native
 
-  @JSName("clone")
-  def copy(): Model = js.native
+  override def attributes: ModelOptions = js.native
 
   def get(name: String): Link = js.native
-
-  def attr(attrs: String, value: String): js.native = js.native
 
   def toJSON(): Model = js.native
 
@@ -41,15 +24,12 @@ class Model(props: ModelOptions) extends js.Object {
   def removeOutPort(port: String, opt: js.UndefOr[js.Any] = js.undefined): Model = js.native
 
   def removeInPort(port: String, opt: js.UndefOr[js.Any] = js.undefined): Model = js.native
+
 }
 
-
 @ScalaJSDefined
-trait ModelOptions extends js.Object {
-  var position: js.UndefOr[Position] = js.undefined
-  var size: js.UndefOr[Size] = js.undefined
+trait ModelOptions extends Options {
   var outPorts: js.UndefOr[js.Array[String]] = js.undefined
   var inPorts: js.UndefOr[js.Array[String]] = js.undefined
   var ports: js.UndefOr[PortOptions] = js.undefined
-  var attrs: js.UndefOr[js.Dictionary[Attrs]] = js.undefined
 }
