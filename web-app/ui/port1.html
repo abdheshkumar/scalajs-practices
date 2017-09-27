@@ -12,11 +12,66 @@
 </head>
 <body>
 <div id="paper-restrict"></div>
-
+<div id="paper-restrict1"></div>
+<button onclick="getJson()">Get Json</button>
 <script type="text/javascript">
+    var graph = new joint.dia.Graph;
+    function getJson() {
+        console.log(JSON.stringify(graph.toJSON()));
+        var graph1 = new joint.dia.Graph;
+        var paper = new joint.dia.Paper({
+            el: $('#paper-restrict1'),
+            width: 800, height: 600, gridSize: 1,
+            model: graph1,
+            defaultLink: new joint.dia.Link({
+                attrs: {'.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}}
+            }),
+            validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+                /* // Prevent links from ports that already have a link
+                 var port = magnet.getAttribute('port');
+                 var links = graph.getConnectedLinks(cellView.model, { outbound: true });
+                 var portLinks = _.filter(links, function(o) {
+                     return o.get('source').port == port;
+                 });
+                 if(portLinks.length > 0) return false;
+
+                 // Prevent linking from input ports.
+                 if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
+                 // Prevent linking from output ports to input ports within one element.
+                 if (cellViewS === cellViewT) return false;
+                 // Prevent linking to input ports.
+                 return magnetT && magnetT.getAttribute('port-group') === 'out';*/
+
+
+                // Prevent linking from input ports.
+                if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
+                // Prevent linking from output ports to input ports within one element.
+                if (cellViewS === cellViewT) return false;
+                // Prevent linking to input ports.
+                var port = magnetS.getAttribute('port');
+                console.log(cellViewS.model);
+                var links = graph.getConnectedLinks(cellViewS.model, {outbound: true});
+                var portLinks = _.filter(links, function (o) {
+                    return o.get('source').port == port;
+                });
+                if (portLinks.length > 1) return false;
+                return magnetT && magnetT.getAttribute('port-group') === 'in';
+            },
+            validateMagnet: function (cellView, magnet) {
+
+                // Note that this is the default behaviour. Just showing it here for reference.
+                // Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
+                return magnet.getAttribute('magnet') !== 'passive';
+            },
+            snapLinks: {radius: 75},
+            markAvailable: true,
+            linkPinning: false
+        });
+        //graph1.fromJSON(graph.toJSON());
+    }
+
     (function () {
 
-        var graph = new joint.dia.Graph;
         var paper = new joint.dia.Paper({
             el: $('#paper-restrict'),
             width: 800, height: 600, gridSize: 1,

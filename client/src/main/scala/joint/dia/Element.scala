@@ -24,7 +24,7 @@ trait Options extends js.Object {
   var size: js.UndefOr[Size] = js.undefined
   var angel: js.UndefOr[Int] = js.undefined
   var id: js.UndefOr[String] = js.undefined
-  var `type`: js.UndefOr[String] = js.undefined
+  val `type`: js.UndefOr[String] = js.undefined
   var attrs: js.UndefOr[Attrs] = js.undefined
 }
 

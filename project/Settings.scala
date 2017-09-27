@@ -1,5 +1,6 @@
 import sbt._
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
+import com.trueaccord.scalapb.compiler.Version.scalapbVersion
 
 object Settings {
 
@@ -44,7 +45,11 @@ object Settings {
     "io.suzaku" %%% "diode-react" % versions.diode,
     "com.lihaoyi" %%% "scalatags" % versions.scalaTags,
     "com.olvind" %%% "scalajs-react-components" % "0.8.0",
-    "com.lihaoyi" %%% "utest" % versions.uTest % "test"))
+    "com.lihaoyi" %%% "utest" % versions.uTest % "test",
+    "com.trueaccord.scalapb" %%% "scalapb-runtime" % scalapbVersion,
+    "com.trueaccord.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf",
+    "com.trueaccord.scalapb" %% "scalapb-json4s" % "0.3.2"
+  ))
 
   /** Dependencies only used by the JVM project */
   val jvmDependencies = Def.setting(Seq(

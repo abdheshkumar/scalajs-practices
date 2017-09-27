@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.chs;
+
+import "scalapb/scalapb.proto";
+
+message PlayNodeData {
+    string name = 1;
+    string measure = 2;
+    int32 calories = 3;
+}

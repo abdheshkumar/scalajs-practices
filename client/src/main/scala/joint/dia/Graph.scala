@@ -12,7 +12,9 @@ class Graph extends js.Object {
 
   def getConnectedLinks(model: Model, boundProps: BoundProps): js.Array[Model] = js.native
 
-  def toJSON(): js.Array[js.Any] = js.native
+  def toJSON(): js.Object = js.native
+
+  def fromJSON(json: Dynamic): Graph = js.native
 
   def on(event: String, fun: js.Function1[CellView, Unit]): js.Any = js.native
 }

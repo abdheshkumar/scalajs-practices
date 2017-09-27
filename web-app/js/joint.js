@@ -15811,10 +15811,10 @@ joint.shapes.devs.Model = joint.shapes.basic.Generic.extend({
     },
 
     _changeGroup: function(group, properties, opt) {
-        
+
         return this.prop('ports/groups/' + group, _.isObject(properties) ? properties : {}, opt);
     },
-    
+
     changeInGroup: function(properties, opt) {
 
         return this._changeGroup('in', properties, opt);

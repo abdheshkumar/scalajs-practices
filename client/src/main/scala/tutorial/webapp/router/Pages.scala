@@ -8,11 +8,9 @@ import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.{BackendScope, Callback, _}
 import joint.CallbackDebug
 import joint.dia._
-import joint.shapes.basic.Rect
 import joint.shapes.devs.{Model, ModelOptions}
 import org.scalajs.dom
 import org.scalajs.dom.html.Div
-import org.scalajs.jquery._
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
@@ -58,153 +56,44 @@ object JointJsPage {
     val graph = new Graph()
 
     def buildGraph() = {
-      val paper = new Paper(new PaperOptions {
-        el = jQuery("#paper")
-        width = 800
-        height = 600
-        gridSize = 1
-        model = graph
-        defaultLink = new Link(new LinkOptions {
-          attrs = js.Dictionary(".marker-target" -> new Attrs {
-            d = "M 10 0 L 0 5 L 10 10 z"
-          })
-        })
-        markAvailable = true
-        linkPinning = false
-        validateConnection = js.defined((cellViewS, magnetS, cellViewT, magnetT, end, linkView) => {
-          val port = magnetS.getAttribute("port")
-          val links = graph.getConnectedLinks(cellViewS.model, new BoundProps {
-            outbound = true
-          }).filter(_.get("source").port == port)
-
-          if (!js.isUndefined(magnetS) && magnetS.getAttribute("port-group") == "in") false
-          else if (links.length > 1) false
-          else !js.isUndefined(magnetT) && magnetT.getAttribute("port-group") == "in"
-        })
-      })
-
-
+      val paper = DiagramUtility.createPaperLayout("#paper", graph)
       paper.on("cell:pointerclick", (cellView, event, _, _) => {
+        //cellView.model.attributes.a =  "custom-field"
         open(cellView)
       })
-      val in0 = new Attrs {
-        portBody = new AttrStyle {
-          fill = "#16A085"
-          magnet = "passive"
-        }
-      }
-
-      val out0 = new Attrs {
-        portBody = new AttrStyle {
-          fill = "#E74C3C"
-        }
-      }
-
-      val attrs0 = new Attrs {
-        label = new AttrStyle {
-          text = "Model 1"
-          `ref-x` = .5
-          `ref-y` = .2
-        }
-        rect = new AttrStyle {
-          fill = "#2ECC71"
-        }
-      }
-      val m1 = new Model(new ModelOptions {
-        position = new Position {
-          x = 50
-          y = 150
-        }
-        size = new Size {
-          width = 200
-          height = 100
-        }
-        outPorts = js.Array("out1", "out2", "out3", "out4", "out5")
-        inPorts = js.Array[String]()
-        ports = new PortOptions {
-          groups = new GroupOptions {
-            out = new Options {
-              attrs = out0
-            }
-          }
-        }
-        attrs = attrs0
-      })
-
-      val m2 = new Model(new ModelOptions {
-        position = new Position {
-          x = 50
-          y = 150
-        }
-        size = new Size {
-          width = 90
-          height = 90
-        }
-        outPorts = js.Array("out1", "out2", "out3")
-        inPorts = js.Array[String]("in1")
-        ports = new PortOptions {
-          groups = new GroupOptions {
-            out = new Options {
-              attrs = out0
-            }
-            in = new Options {
-              attrs = in0
-            }
-          }
-        }
-        attrs = attrs0
-      })
 
 
-      m2.attr(".label/text", "Model 2")
-      m2.translate(300, 0)
+      val m1 = DiagramUtility.callNode(js.Array[String](), js.Array("1", "2", "3", "4", "5"), "Model 1")
+      val m2 = DiagramUtility.callNode(js.Array("in1"), js.Array("out1", "out2", "out3"), "Model 2")
       val m3 = m2.copy()
+      val m4 = DiagramUtility.callNode(js.Array("in1"), js.Array[String](), "Model 4")
+
+      m2.translate(300, 0)
       m3.attr(".label/text", "Model 3")
       m3.translate(0, 200)
-
-      val m4 = new Model(new ModelOptions {
-        position = new Position {
-          x = 50
-          y = 150
-        }
-        size = new Size {
-          width = 90
-          height = 90
-        }
-        outPorts = js.Array[String]()
-        inPorts = js.Array("in1")
-        ports = new PortOptions {
-          groups = new GroupOptions {
-            in = new Options {
-              attrs = in0
-            }
-          }
-        }
-        attrs = attrs0
-      })
-
-      val r = new Rect(new Options {
-        attrs = new Attrs {
-          text = new AttrStyle {
-            text = "Rect Model"
-          }
-        }
-      })
-
-      m4.attr(".label/text", "Model 4")
       m4.translate(600, 100)
       graph.addCell[ModelOptions, Model](m1)
       graph.addCell[ModelOptions, Model](m2)
       graph.addCell[ModelOptions, Model](m3)
       graph.addCell[ModelOptions, Model](m4)
+      //graph.addCell[Options, Rect](r)
     }
+
 
     private def open(cellView: CellView) = {
       ($.setState(State(true, cellView)) >> Callback.log("Dialog Open")).runNow()
     }
 
-    def getJson(cellView: js.UndefOr[CellView]): CallbackTo[Unit] = Callback {
-      dom.console.log(JSON.stringify(cellView.map(_.model).getOrElse("")))
+    def getJson(): CallbackTo[Unit] = Callback {
+      /*val graph1 = new Graph()
+      val paper = DiagramUtility.createPaperLayout("#paper1", graph1)
+      val st = """{"cells":[{"type":"devs.Model","inPorts":[],"outPorts":["1","2","3","4","5"],"size":{"width":90,"height":90},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#16A085","stroke":"#000","r":10,"magnet":"passive"}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#E74C3C","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[{"id":"1","group":"out","attrs":{".port-label":{"text":"1"}}},{"id":"2","group":"out","attrs":{".port-label":{"text":"2"}}},{"id":"3","group":"out","attrs":{".port-label":{"text":"3"}}},{"id":"4","group":"out","attrs":{".port-label":{"text":"4"}}},{"id":"5","group":"out","attrs":{".port-label":{"text":"5"}}}]},"position":{"x":50,"y":150},"angle":0,"id":"6b2d6e9b-30c8-4e51-a54f-e5fdb7925c7d","z":1,"attrs":{".label":{"text":"Model 1","ref-y":0.2},"rect":{"fill":"#2ECC71"}}},{"type":"devs.Model","inPorts":["in1"],"outPorts":["out1","out2","out3"],"size":{"width":90,"height":90},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#16A085","stroke":"#000","r":10,"magnet":"passive"}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#E74C3C","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[{"id":"in1","group":"in","attrs":{".port-label":{"text":"in1"}}},{"id":"out1","group":"out","attrs":{".port-label":{"text":"out1"}}},{"id":"out2","group":"out","attrs":{".port-label":{"text":"out2"}}},{"id":"out3","group":"out","attrs":{".port-label":{"text":"out3"}}}]},"position":{"x":350,"y":150},"angle":0,"id":"8cfee16c-7130-4b80-b46e-9040d609258b","z":2,"a":{"id$1":"Test data","hello$1":"Name:Test data","number$1":1,"list$1":{"u":["Test data","Test data","Test data"]},"config$1":{"name$1":"Test data"}},"attrs":{".label":{"text":"Model 2","ref-y":0.2},"rect":{"fill":"#2ECC71"}}},{"type":"devs.Model","inPorts":["in1"],"outPorts":["out1","out2","out3"],"size":{"width":90,"height":90},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#16A085","stroke":"#000","r":10,"magnet":"passive"}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#E74C3C","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[{"id":"in1","group":"in","attrs":{".port-label":{"text":"in1"}}},{"id":"out1","group":"out","attrs":{".port-label":{"text":"out1"}}},{"id":"out2","group":"out","attrs":{".port-label":{"text":"out2"}}},{"id":"out3","group":"out","attrs":{".port-label":{"text":"out3"}}}]},"position":{"x":50,"y":350},"angle":0,"id":"fe66c047-bdb4-4f59-9fcc-045aa41690bc","z":3,"attrs":{".label":{"text":"Model 3","ref-y":0.2},"rect":{"fill":"#2ECC71"}}},{"type":"devs.Model","inPorts":["in1"],"outPorts":[],"size":{"width":90,"height":90},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#16A085","stroke":"#000","r":10,"magnet":"passive"}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#E74C3C","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[{"id":"in1","group":"in","attrs":{".port-label":{"text":"in1"}}}]},"position":{"x":650,"y":250},"angle":0,"id":"853ddf9d-c306-409d-9342-c8dfb1e2818f","z":4,"attrs":{".label":{"text":"Model 4","ref-y":0.2},"rect":{"fill":"#2ECC71"}}},{"type":"link","source":{"id":"6b2d6e9b-30c8-4e51-a54f-e5fdb7925c7d","selector":"g:nth-child(1) > g:nth-child(4) > circle:nth-child(1)","port":"2"},"target":{"id":"8cfee16c-7130-4b80-b46e-9040d609258b","port":"in1","selector":"g:nth-child(1) > g:nth-child(3) > circle:nth-child(1)"},"id":"39473b6f-0d7f-4d8d-a613-246c2fe9523b","z":5,"attrs":{".marker-target":{"d":"M 10 0 L 0 5 L 10 10 z"}}}]}"""
+      graph1.fromJSON(JSON.parse(st))
+      paper.on("cell:pointerclick", (cellView, event, _, _) => {
+        //cellView.model.attributes.a =  "custom-field"
+        //dom.console.log(cellView.model.attributes.a.map(_.name))
+      })*/
+      dom.console.log(JSON.stringify(graph.toJSON()))
     }
 
 
@@ -215,11 +104,13 @@ object JointJsPage {
 
     def handleDialogSubmit(cellView: js.UndefOr[CellView]): TouchTapEvent => Callback =
       e => close >> Callback.info("Submit Clicked") >> Callback {
-        cellView.map(_.model.addInPort("Added"))
+
+        //cellView.map(_.model.addInPort("Added"))
       }
 
     def render(S: State): TagOf[Div] = {
       dom.console.log(S.cellView.map(_.model))
+      //dom.console.log(S.cellView.flatMap(_.model.attributes.a.map(_.id)))
       val actions: VdomNode = js.Array(
         MuiFlatButton(key = "1",
           label = "Cancel",
@@ -234,6 +125,7 @@ object JointJsPage {
       <.div(
         <.div(s"JointJs-React Template ${r}"),
         <.div(^.id := "paper", ""),
+        <.div(^.id := "paper1", ""),
         MuiMuiThemeProvider()(
           <.div(
             MuiDialog(
@@ -246,7 +138,7 @@ object JointJsPage {
             )
           )
         ),
-        <.button(^.onClick --> getJson(S.cellView), "Get Json")
+        <.button(^.onClick --> getJson(), "Get Json")
       )
     }
   }

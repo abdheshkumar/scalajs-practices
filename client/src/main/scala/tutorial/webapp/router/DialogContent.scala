@@ -1,9 +1,12 @@
 package tutorial.webapp.router
 
 import chandu0101.scalajs.react.components.materialui.MuiTextField
+import com.chs.playNodeData.PlayNodeData
+import com.trueaccord.scalapb.json.JsonFormat
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import joint.dia.CellView
+import joint.shapes.devs.NodeMetadata
 
 import scala.scalajs.js
 
@@ -11,46 +14,46 @@ object DialogContent {
 
   case class Props(cellView: js.UndefOr[CellView])
 
-  case class State(v: String)
+  case class State(v: PlayNodeData)
 
   class Backend($: BackendScope[Props, State]) {
-    def onChange = (event: ReactEventFromInput, _: String) => {
-      val a = event.target.value
-      $.modState(_.copy(v = a))
-    }
 
-    def onBlur(p: Props) = (event: ReactFocusEventFromInput) => Callback {
+    def onBlur(p: Props, S: State, fun: (PlayNodeData, String) => PlayNodeData) = (event: ReactFocusEventFromInput) => {
       val a = event.target.value
-      p.cellView.map(_.model.addInPort(a))
-      println("::::" + p.cellView.map(_.model.get("type")))
-      //$.modState(_.copy(v = a))
+      val n = fun(S.v, a)
+      p.cellView.map(_.model.attributes.nodeMetadata = new NodeMetadata(n.toByteString.toStringUtf8, ""))
+      $.modState(s => s.copy(n))
     }
-
-    val textFields = (portsOpt: js.UndefOr[js.Array[String]]) => portsOpt.map {
-      ports =>
-        ports.zipWithIndex.toVdomArray {
-          case (v, k) =>
-              MuiTextField(
-                key = k.toString,
-                hintText = "Hint Text",
-                value = v,
-                /*onBlur = onBlur(P),*/
-                onChange = onChange)()
-        }
-    }.getOrElse(EmptyVdom)
 
     def render(P: Props, S: State) = {
       <.div(
-        textFields(P.cellView.flatMap(_.model.attributes.inPorts)),
-        textFields(P.cellView.flatMap(_.model.attributes.outPorts))/*,
-        <.div(s"${P.cellView.map(f => JSON.stringify(f.model.toJSON())).getOrElse("")}")*/
+        MuiTextField(
+          hintText = "Type name",
+          defaultValue = S.v.name,
+          onBlur = onBlur(P, S, (n, in) => n.withName(in)))(),
+        MuiTextField(
+          hintText = "Type number",
+          defaultValue = S.v.calories.toString,
+          onBlur = onBlur(P, S, (n, in) => n.withCalories(in.toInt)))(),
+        MuiTextField(
+          hintText = "Type number",
+          defaultValue = S.v.measure.toString,
+          onBlur = onBlur(P, S, (n, in) => n.withMeasure(in)))()
       )
     }
   }
 
   val component = ScalaComponent
     .builder[Props]("DialogContent")
-    .initialState(State("Hello"))
+    .initialStateFromProps {
+      p =>
+
+        val node = p.cellView.flatMap(_.model.attributes.nodeMetadata)
+          .toOption
+          .map(f => PlayNodeData.parseFrom(f.byteString.getBytes)).getOrElse(PlayNodeData())
+        //println("::::::" + JsonFormat.toJsonString[PlayNodeData](PlayNodeData()))
+        State(node)
+    }
     .renderBackend[Backend]
     .build
 
