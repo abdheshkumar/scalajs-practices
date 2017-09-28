@@ -1,14 +1,21 @@
 import sbt.Keys.version
 
-lazy val root = (crossProject.crossType(CrossType.Pure) in (file("shared"))).
+lazy val shared = (crossProject.crossType(CrossType.Pure) in (file("shared"))).
   settings(
     version := Settings.version,
-    scalaVersion := Settings.versions.scala
+    scalaVersion := Settings.versions.scala,
+    PB.targets in Compile := Seq(
+      scalapb.gen() -> (sourceManaged in Compile).value
+    ),
+    PB.protoSources in Compile := Seq(
+      baseDirectory.value.getParentFile / "src/main/protobuf"
+    )
   )
 
-lazy val sharedJVM = root.jvm.settings(name := "sharedJVM")
+lazy val sharedJVM = shared.jvm.settings(name := "sharedJVM")
 
-lazy val sharedJS = root.js.settings(name := "sharedJS")
+lazy val sharedJS = shared.js.settings(name := "sharedJS")
+
 
 lazy val client: Project = (project in file("client"))
   .settings(
@@ -28,8 +35,7 @@ lazy val client: Project = (project in file("client"))
     artifactPath in(Test, fastOptJS) := file("web-app/js/app.test.js"),
     artifactPath in(Test, fullOptJS) := file("web-app/js/app.min.test.js"),
     artifactPath in(Test, packageJSDependencies) := file("web-app/js/deps.test.js"),
-    artifactPath in(Test, packageMinifiedJSDependencies) := file("web-app/js/deps.min.test.js"),
-    PB.targets in Compile := Seq(scalapb.gen() -> (sourceManaged in Compile).value) /*,
+    artifactPath in(Test, packageMinifiedJSDependencies) := file("web-app/js/deps.min.test.js") /*,
     webpackConfigFile in fastOptJS := Some(baseDirectory.value / "webpack.config.js"),
     crossTarget in npmUpdate in Compile := file("web-app/js"),
     npmDevDependencies in Compile ++= Seq(

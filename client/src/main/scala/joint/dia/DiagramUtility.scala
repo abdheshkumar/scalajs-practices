@@ -34,7 +34,7 @@ object DiagramUtility {
     paper
   }
 
-  def callNode(inPorts0: js.Array[String],
+  def callNode(nodeType:String,inPorts0: js.Array[String],
                outPorts0: js.Array[String],
                nodeName: String): Model = {
 
@@ -62,7 +62,7 @@ object DiagramUtility {
       }
     }
 
-    new Model(new ModelOptions {
+    new Model(new ModelOptions(nodeType) {
       position = new Position {
         x = 50
         y = 150

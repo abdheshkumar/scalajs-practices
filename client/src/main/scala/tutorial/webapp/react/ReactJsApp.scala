@@ -2,9 +2,6 @@ package tutorial.webapp.react
 
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
-import org.scalajs.dom.document
-
-import scala.scalajs.js.JSApp
 
 object ReactJsApp /*extends JSApp*/ {
   val TodoList = ScalaComponent.builder[List[String]]("TodoList")

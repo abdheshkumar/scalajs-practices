@@ -1,12 +1,11 @@
 package joint.shapes.devs
 
-import chandu0101.macros.tojs.JSMacro
+import com.google.protobuf.ByteString
 import joint.dia.{Link, Options, PortOptions}
 import joint.shapes.basic.Generic
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSGlobal, ScalaJSDefined}
-import scala.scalajs.js.|
 
 @js.native
 @JSGlobal("joint.shapes.devs.Model")
@@ -30,7 +29,7 @@ class Model(props: ModelOptions) extends Generic[ModelOptions, Model] {
 }
 
 @ScalaJSDefined
-trait ModelOptions extends Options {
+class ModelOptions(val nodeType: String) extends Options {
   var markup: js.UndefOr[String] = js.undefined
   var portMarkup: js.UndefOr[String] = js.undefined
   var portLabelMarkup: js.UndefOr[String] = js.undefined

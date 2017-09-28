@@ -46,13 +46,20 @@ object Settings {
     "com.lihaoyi" %%% "scalatags" % versions.scalaTags,
     "com.olvind" %%% "scalajs-react-components" % "0.8.0",
     "com.lihaoyi" %%% "utest" % versions.uTest % "test",
-    "com.trueaccord.scalapb" %%% "scalapb-runtime" % scalapbVersion,
-    "com.trueaccord.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf",
-    "com.trueaccord.scalapb" %% "scalapb-json4s" % "0.3.2"
+    "com.trueaccord.scalapb" %%% "scalapb-runtime" % com.trueaccord.scalapb.compiler.Version.scalapbVersion,
+    "com.trueaccord.scalapb" %%% "scalapb-runtime" % com.trueaccord.scalapb.compiler.Version.scalapbVersion % "protobuf"
   ))
+
+  val circeVersion = "0.8.0"
+
+  val circle = Seq(
+    "io.circe" %% "circe-core",
+    "io.circe" %% "circe-generic",
+    "io.circe" %% "circe-parser"
+  ).map(_ % circeVersion)
 
   /** Dependencies only used by the JVM project */
   val jvmDependencies = Def.setting(Seq(
     "com.typesafe.akka" %% "akka-http" % versions.akkaHttp
-  ))
+  ) ++ circle)
 }
