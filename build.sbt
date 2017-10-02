@@ -1,9 +1,20 @@
 import sbt.Keys.version
 
-lazy val shared = (crossProject.crossType(CrossType.Pure) in (file("shared"))).
-  settings(
-    version := Settings.version,
-    scalaVersion := Settings.versions.scala,
+lazy val commonSettings = Seq(
+  version := Settings.version,
+  organization := "com.abtechsoft",
+  scalaVersion := Settings.versions.scala,
+  scalacOptions ++= Settings.scalacOptions)
+
+lazy val shared = (crossProject.crossType(CrossType.Pure) in (file("shared")))
+  .settings(commonSettings)
+  .settings(
+    name := "shared",
+    publish := {},
+    publishLocal := {},
+    libraryDependencies ++= Seq(
+      "com.trueaccord.scalapb" %% "scalapb-runtime" % com.trueaccord.scalapb.compiler.Version.scalapbVersion % "protobuf"
+    ),
     PB.targets in Compile := Seq(
       scalapb.gen() -> (sourceManaged in Compile).value
     ),
@@ -18,11 +29,9 @@ lazy val sharedJS = shared.js.settings(name := "sharedJS")
 
 
 lazy val client: Project = (project in file("client"))
+  .settings(commonSettings)
   .settings(
     name := "client",
-    version := Settings.version,
-    scalaVersion := Settings.versions.scala,
-    scalacOptions ++= Settings.scalacOptions,
     libraryDependencies ++= Settings.scalajsDependencies.value,
     jsDependencies ++= Settings.jsDependencies.value,
     scalaJSUseMainModuleInitializer := true,
@@ -78,10 +87,8 @@ lazy val client: Project = (project in file("client"))
 
 
 lazy val server = (project in file("server"))
+  .settings(commonSettings)
   .settings(
     name := "server",
-    version := Settings.version,
-    scalaVersion := Settings.versions.scala,
-    scalacOptions ++= Settings.scalacOptions,
     libraryDependencies ++= Settings.jvmDependencies.value
   ).dependsOn(sharedJVM)

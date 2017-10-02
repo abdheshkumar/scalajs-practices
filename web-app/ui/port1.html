@@ -16,6 +16,7 @@
 <button onclick="getJson()">Get Json</button>
 <script type="text/javascript">
     var graph = new joint.dia.Graph;
+
     function getJson() {
         console.log(JSON.stringify(graph.toJSON()));
         var graph1 = new joint.dia.Graph;
@@ -120,7 +121,11 @@
             markAvailable: true,
             linkPinning: false
         });
-
+        paper.on("cell:pointerclick", function (cellView, event, x, y) {
+            //cellView.model.attributes.a =  "custom-field"
+            cellView.model.openSettings(cellView);
+            //open(cellView)
+        });
         var m1 = new joint.shapes.devs.Model({
             position: {x: 50, y: 150},
             size: {width: 90, height: 90},
@@ -142,36 +147,61 @@
             }
         });
 
-        var m2 = new joint.shapes.devs.Model({
-            position: {x: 50, y: 50},
-            size: {width: 90, height: 90},
-            inPorts: ['in1'],
+        /*  var m2 = new joint.shapes.devs.Model({
+              position: {x: 50, y: 50},
+              size: {width: 90, height: 90},
+              inPorts: ['in1'],
+              outPorts: ['out1', 'out2', 'out3'],
+              ports: {
+                  groups: {
+                      'in': {
+                          attrs: {
+                              '.port-body': {
+                                  fill: '#16A085',
+                                  magnet: 'passive'
+                              }
+                          }
+                      },
+                      'out': {
+                          attrs: {
+                              '.port-body': {
+                                  fill: '#E74C3C'
+                              }
+                          }
+                      }
+                  }
+              },
+              attrs: {
+                  '.label': {text: 'Model2', 'ref-x': .5, 'ref-y': .2},
+                  rect: {fill: '#2ECC71'}
+              }
+          });*/
+
+        var Node = joint.shapes.devs.Model.define('chs.Node', {
+            position: {x: 50, y: 50}
+        }, {
+            openSettings: function (cv) {
+                console.log(cv);
+
+            }
+        });
+
+
+        var PlayNode = Node.define("chs.PlayNode", {
             outPorts: ['out1', 'out2', 'out3'],
             ports: {
                 groups: {
-                    'in': {
-                        attrs: {
-                            '.port-body': {
-                                fill: '#16A085',
-                                magnet: 'passive'
-                            }
-                        }
-                    },
                     'out': {
                         attrs: {
                             '.port-body': {
-                                fill: '#E74C3C'
+                                fill: '#16A085'
                             }
                         }
                     }
                 }
-            },
-            attrs: {
-                '.label': {text: 'Model2', 'ref-x': .5, 'ref-y': .2},
-                rect: {fill: '#2ECC71'}
             }
         });
-
+        var m2 = new PlayNode();
         m2.translate(300, 0);
         var m3 = m2.clone();
         m3.attr('.label/text', 'Model 3');

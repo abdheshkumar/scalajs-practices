@@ -7,7 +7,7 @@ import japgolly.scalajs.react.vdom.TagOf
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.{BackendScope, Callback, _}
 import joint.dia._
-import joint.shapes.devs.{Model, ModelOptions}
+import joint.shapes.devs.{Model, ModelOptions, PlayNode}
 import org.scalajs.dom
 import org.scalajs.dom.html.Div
 
@@ -56,12 +56,12 @@ object JointJsPage {
     def buildGraph() = {
       val paper = DiagramUtility.createPaperLayout("#paper", graph)
       paper.on("cell:pointerclick", (cellView, event, _, _) => {
-        //cellView.model.attributes.a =  "custom-field"
+        //cellView.model.openDialog(cellView)
         open(cellView)
       })
 
 
-      val m1 = DiagramUtility.callNode("playNode", js.Array[String](), js.Array("1", "2", "3", "4", "5"), "Model 1")
+      val m1 = PlayNode()
       val m2 = DiagramUtility.callNode("gatherNode", js.Array("in1"), js.Array("out1", "out2", "out3"), "Model 2")
       val m3 = m2.copy()
       val m4 = DiagramUtility.callNode("playNode", js.Array("in1"), js.Array[String](), "Model 4")
@@ -84,34 +84,23 @@ object JointJsPage {
     }
 
     def getJson(S: State): CallbackTo[Unit] = Callback {
-      /*val graph1 = new Graph()
-      val paper = DiagramUtility.createPaperLayout("#paper1", graph1)
-      val st = """{"cells":[{"type":"devs.Model","inPorts":[],"outPorts":["1","2","3","4","5"],"size":{"width":90,"height":90},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#16A085","stroke":"#000","r":10,"magnet":"passive"}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#E74C3C","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[{"id":"1","group":"out","attrs":{".port-label":{"text":"1"}}},{"id":"2","group":"out","attrs":{".port-label":{"text":"2"}}},{"id":"3","group":"out","attrs":{".port-label":{"text":"3"}}},{"id":"4","group":"out","attrs":{".port-label":{"text":"4"}}},{"id":"5","group":"out","attrs":{".port-label":{"text":"5"}}}]},"position":{"x":50,"y":150},"angle":0,"id":"6b2d6e9b-30c8-4e51-a54f-e5fdb7925c7d","z":1,"attrs":{".label":{"text":"Model 1","ref-y":0.2},"rect":{"fill":"#2ECC71"}}},{"type":"devs.Model","inPorts":["in1"],"outPorts":["out1","out2","out3"],"size":{"width":90,"height":90},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#16A085","stroke":"#000","r":10,"magnet":"passive"}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#E74C3C","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[{"id":"in1","group":"in","attrs":{".port-label":{"text":"in1"}}},{"id":"out1","group":"out","attrs":{".port-label":{"text":"out1"}}},{"id":"out2","group":"out","attrs":{".port-label":{"text":"out2"}}},{"id":"out3","group":"out","attrs":{".port-label":{"text":"out3"}}}]},"position":{"x":350,"y":150},"angle":0,"id":"8cfee16c-7130-4b80-b46e-9040d609258b","z":2,"a":{"id$1":"Test data","hello$1":"Name:Test data","number$1":1,"list$1":{"u":["Test data","Test data","Test data"]},"config$1":{"name$1":"Test data"}},"attrs":{".label":{"text":"Model 2","ref-y":0.2},"rect":{"fill":"#2ECC71"}}},{"type":"devs.Model","inPorts":["in1"],"outPorts":["out1","out2","out3"],"size":{"width":90,"height":90},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#16A085","stroke":"#000","r":10,"magnet":"passive"}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#E74C3C","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[{"id":"in1","group":"in","attrs":{".port-label":{"text":"in1"}}},{"id":"out1","group":"out","attrs":{".port-label":{"text":"out1"}}},{"id":"out2","group":"out","attrs":{".port-label":{"text":"out2"}}},{"id":"out3","group":"out","attrs":{".port-label":{"text":"out3"}}}]},"position":{"x":50,"y":350},"angle":0,"id":"fe66c047-bdb4-4f59-9fcc-045aa41690bc","z":3,"attrs":{".label":{"text":"Model 3","ref-y":0.2},"rect":{"fill":"#2ECC71"}}},{"type":"devs.Model","inPorts":["in1"],"outPorts":[],"size":{"width":90,"height":90},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#16A085","stroke":"#000","r":10,"magnet":"passive"}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#E74C3C","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[{"id":"in1","group":"in","attrs":{".port-label":{"text":"in1"}}}]},"position":{"x":650,"y":250},"angle":0,"id":"853ddf9d-c306-409d-9342-c8dfb1e2818f","z":4,"attrs":{".label":{"text":"Model 4","ref-y":0.2},"rect":{"fill":"#2ECC71"}}},{"type":"link","source":{"id":"6b2d6e9b-30c8-4e51-a54f-e5fdb7925c7d","selector":"g:nth-child(1) > g:nth-child(4) > circle:nth-child(1)","port":"2"},"target":{"id":"8cfee16c-7130-4b80-b46e-9040d609258b","port":"in1","selector":"g:nth-child(1) > g:nth-child(3) > circle:nth-child(1)"},"id":"39473b6f-0d7f-4d8d-a613-246c2fe9523b","z":5,"attrs":{".marker-target":{"d":"M 10 0 L 0 5 L 10 10 z"}}}]}"""
-      graph1.fromJSON(JSON.parse(st))
-      paper.on("cell:pointerclick", (cellView, event, _, _) => {
-        //cellView.model.attributes.a =  "custom-field"
-        //dom.console.log(cellView.model.attributes.a.map(_.name))
-      })*/
-      println(S.isOpen)
       dom.console.log(JSON.stringify(graph.toJSON()))
     }
 
     def render(S: State): TagOf[Div] = {
-      val nodeType = S.cellView.map(_.model.attributes.nodeType).toOption
       val empty: VdomElement = ScalaComponent.static("EmptyComponent")(<.div(""))()
-      val component = nodeType match {
-        case Some(n) =>
-          if (n == "playNode") PlayNodeDialog(PlayNodeDialog.Props(S.isOpen, S.cellView, close))
-          else if (n == "gatherNode") GatherNodeDialog(GatherNodeDialog.Props(S.isOpen, S.cellView, close))
-          else empty
+      val component = S.cellView.map(_.model).toOption match {
+        case Some(n) => //n.dialog(Props(S.isOpen, S.cellView, close))
+        /* if (n == PlayNode) PlayNodeDialog(PlayNodeDialog.Props(S.isOpen, S.cellView, close))
+         else if (n == GatherNode) GatherNodeDialog(GatherNodeDialog.Props(S.isOpen, S.cellView, close))
+         else empty*/
         case _ => empty
       }
-
       <.div(
         <.div(s"JointJs-React Template"),
         <.div(^.id := "paper", ""),
         <.div(^.id := "paper1", ""),
-        MuiMuiThemeProvider()(<.div(component)),
+        MuiMuiThemeProvider()(<.div(empty)),
         <.button(^.onClick --> getJson(S), "Get Json")
       )
     }

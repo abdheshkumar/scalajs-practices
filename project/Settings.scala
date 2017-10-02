@@ -46,6 +46,7 @@ object Settings {
     "com.lihaoyi" %%% "scalatags" % versions.scalaTags,
     "com.olvind" %%% "scalajs-react-components" % "0.8.0",
     "com.lihaoyi" %%% "utest" % versions.uTest % "test",
+    "com.chs" %%% "com.chs.protocols" % "0.01",
     "com.trueaccord.scalapb" %%% "scalapb-runtime" % com.trueaccord.scalapb.compiler.Version.scalapbVersion,
     "com.trueaccord.scalapb" %%% "scalapb-runtime" % com.trueaccord.scalapb.compiler.Version.scalapbVersion % "protobuf"
   ))
@@ -60,6 +61,7 @@ object Settings {
 
   /** Dependencies only used by the JVM project */
   val jvmDependencies = Def.setting(Seq(
-    "com.typesafe.akka" %% "akka-http" % versions.akkaHttp
+    "com.typesafe.akka" %% "akka-http" % versions.akkaHttp,
+    "com.chs" %% "com.chs.protocols" % "0.01"
   ) ++ circle)
 }

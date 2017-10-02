@@ -3,12 +3,12 @@ package tutorial.webapp.router
 import java.util.Base64
 
 import chandu0101.scalajs.react.components.materialui.{MuiDialog, MuiFlatButton, MuiTextField, TouchTapEvent}
-import com.chs.playNodeData.PlayNodeData
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import joint.CallbackDebug
 import joint.dia.CellView
 import joint.shapes.devs.NodeMetadata
+import ngage.sdk.graph.node.PlayNodeData
 
 import scala.scalajs.js
 
@@ -25,7 +25,6 @@ object GatherNodeDialog {
     def onBlur(p: Props, S: State, fun: (PlayNodeData, String) => PlayNodeData) = (event: ReactFocusEventFromInput) => {
       val a = event.target.value
       val n = fun(S.nodeData, a)
-      p.cellView.map(_.model.attributes.nodeMetadata = new NodeMetadata(Base64.getEncoder.encodeToString(n.toByteArray), ""))
       $.modState(s => s.copy(nodeData = n))
     }
 
@@ -34,12 +33,13 @@ object GatherNodeDialog {
     def handleDialogCancel: TouchTapEvent => Callback =
       e => close >> Callback.info("Cancel Clicked")
 
-    def handleDialogSubmit(cellView: js.UndefOr[CellView]): TouchTapEvent => Callback =
-      e => close >> Callback.info("Submit Clicked") >> Callback {
-        //cellView.map(_.model.addInPort("Added"))
-      }
+    def handleDialogSubmit(p: Props, S: State): TouchTapEvent => Callback =
+      e => close >> Callback {
+        p.cellView.map(_.model.attributes.nodeMetadata = new NodeMetadata(Base64.getEncoder.encodeToString(S.nodeData.toByteArray), ""))
+      } >> Callback.info("Submit Clicked")
 
-    val actions = (cellView: js.UndefOr[CellView]) => js.Array(
+
+    val actions = (p: Props, S: State) => js.Array(
       MuiFlatButton(key = "1",
         label = "Cancel",
         secondary = true,
@@ -47,33 +47,28 @@ object GatherNodeDialog {
       MuiFlatButton(key = "2",
         label = "Submit",
         secondary = true,
-        onTouchTap = handleDialogSubmit(cellView))()
+        onTouchTap = handleDialogSubmit(p, S))()
     ).toVdomArray
 
     def render(P: Props, S: State) = {
       <.div(
         MuiDialog(
           title = "Gather Node Dialog",
-          actions = actions(P.cellView),
+          actions = actions(P, S),
           open = S.isOpen,
           onRequestClose = CallbackDebug.f1("onRequestClose")
         )(
           <.div(
             MuiTextField(
               hintText = "Type name",
-              defaultValue = S.nodeData.name,
-              onBlur = onBlur(P, S, (n, in) => n.withName(in)))(),
+              defaultValue = S.nodeData.nodeName,
+              onBlur = onBlur(P, S, (n, in) => n.withNodeName(in)))(),
             MuiTextField(
               hintText = "Type number",
-              defaultValue = S.nodeData.calories.toString,
-              onBlur = onBlur(P, S, (n, in) => n.withCalories(in.toInt)))(),
-            MuiTextField(
-              hintText = "Type number",
-              defaultValue = S.nodeData.measure.toString,
-              onBlur = onBlur(P, S, (n, in) => n.withMeasure(in)))(),
+              defaultValue = S.nodeData.nodeId.toString,
+              onBlur = onBlur(P, S, (n, in) => n.withNodeId(in)))(),
             <.div(s"Node's Configuration:${S.nodeData}")
           )
-
         )
       )
 

@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package com.chs;
-
-message PlayNodeData {
-    string name = 1;
-    string measure = 2;
-    int32 calories = 3;
-}

@@ -62,7 +62,7 @@ object DiagramUtility {
       }
     }
 
-    new Model(new ModelOptions(nodeType) {
+    Model(new ModelOptions {
       position = new Position {
         x = 50
         y = 150
