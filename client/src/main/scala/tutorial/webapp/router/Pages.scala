@@ -7,7 +7,8 @@ import japgolly.scalajs.react.vdom.TagOf
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.{BackendScope, Callback, _}
 import joint.dia._
-import joint.shapes.devs.{Model, ModelOptions, PlayNode}
+import joint.shapes.chs.nodes.{GatherNode, PlayNode, StartNode}
+import joint.shapes.devs._
 import org.scalajs.dom
 import org.scalajs.dom.html.Div
 
@@ -45,6 +46,7 @@ object InnerPage {
   }
 }
 
+
 object JointJsPage {
 
   case class State(isOpen: Boolean, cellView: js.UndefOr[CellView])
@@ -56,25 +58,18 @@ object JointJsPage {
     def buildGraph() = {
       val paper = DiagramUtility.createPaperLayout("#paper", graph)
       paper.on("cell:pointerclick", (cellView, event, _, _) => {
-        //cellView.model.openDialog(cellView)
         open(cellView)
       })
 
 
-      val m1 = PlayNode()
-      val m2 = DiagramUtility.callNode("gatherNode", js.Array("in1"), js.Array("out1", "out2", "out3"), "Model 2")
-      val m3 = m2.copy()
-      val m4 = DiagramUtility.callNode("playNode", js.Array("in1"), js.Array[String](), "Model 4")
-
+      val m1 = StartNode()
+      val m2 = PlayNode()
+      val m3 = GatherNode()
       m2.translate(300, 0)
-      m3.attr(".label/text", "Model 3")
       m3.translate(0, 200)
-      m4.translate(600, 100)
       graph.addCell[ModelOptions, Model](m1)
       graph.addCell[ModelOptions, Model](m2)
       graph.addCell[ModelOptions, Model](m3)
-      graph.addCell[ModelOptions, Model](m4)
-      //graph.addCell[Options, Rect](r)
     }
 
     val close = $.modState(_.copy(isOpen = false))
@@ -89,18 +84,12 @@ object JointJsPage {
 
     def render(S: State): TagOf[Div] = {
       val empty: VdomElement = ScalaComponent.static("EmptyComponent")(<.div(""))()
-      val component = S.cellView.map(_.model).toOption match {
-        case Some(n) => //n.dialog(Props(S.isOpen, S.cellView, close))
-        /* if (n == PlayNode) PlayNodeDialog(PlayNodeDialog.Props(S.isOpen, S.cellView, close))
-         else if (n == GatherNode) GatherNodeDialog(GatherNodeDialog.Props(S.isOpen, S.cellView, close))
-         else empty*/
-        case _ => empty
-      }
+      val component = S.cellView.map(_.model).toOption.fold(empty)(_.dialog(Props(S.isOpen, S.cellView, close)))
       <.div(
         <.div(s"JointJs-React Template"),
         <.div(^.id := "paper", ""),
         <.div(^.id := "paper1", ""),
-        MuiMuiThemeProvider()(<.div(empty)),
+        MuiMuiThemeProvider()(<.div(component)),
         <.button(^.onClick --> getJson(S), "Get Json")
       )
     }

@@ -1,6 +1,6 @@
 package joint.dia
 
-import japgolly.scalajs.react.vdom.html_<^.VdomElement
+import japgolly.scalajs.react.vdom.html_<^
 import joint.shapes.devs.Props
 
 import scala.scalajs.js
@@ -18,9 +18,8 @@ abstract trait Cell[OP <: Options, C <: Cell[OP, C]] extends js.Object {
 
 @ScalaJSDefined
 trait PrototypeProperties extends js.Object {
-  def openDialog(cellView: CellView): Unit
-
-  def dialog(props: Props): VdomElement
+  val dialog: js.Function1[Props, html_<^.VdomElement]
+  val openDialog: js.Function1[CellView, Unit]
 }
 
 @ScalaJSDefined

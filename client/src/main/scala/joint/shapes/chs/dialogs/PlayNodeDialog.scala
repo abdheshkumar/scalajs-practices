@@ -1,4 +1,4 @@
-package tutorial.webapp.router
+package joint.shapes.chs.dialogs
 
 import java.util.Base64
 
@@ -6,17 +6,12 @@ import chandu0101.scalajs.react.components.materialui.{MuiDialog, MuiFlatButton,
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import joint.CallbackDebug
-import joint.dia.CellView
-import joint.shapes.devs.NodeMetadata
+import joint.shapes.devs.{NodeMetadata, Props}
 import ngage.sdk.graph.node.PlayNodeData
 
 import scala.scalajs.js
 
-object GatherNodeDialog {
-
-  case class Props(isOpen: Boolean,
-                   cellView: js.UndefOr[CellView],
-                   close: CallbackTo[Unit])
+object PlayNodeDialog {
 
   case class State(isOpen: Boolean, nodeData: PlayNodeData)
 
@@ -25,6 +20,7 @@ object GatherNodeDialog {
     def onBlur(p: Props, S: State, fun: (PlayNodeData, String) => PlayNodeData) = (event: ReactFocusEventFromInput) => {
       val a = event.target.value
       val n = fun(S.nodeData, a)
+      //p.cellView.map(_.model.attributes.nodeMetadata = new NodeMetadata(Base64.getEncoder.encodeToString(n.toByteArray), ""))
       $.modState(s => s.copy(nodeData = n))
     }
 
@@ -37,7 +33,6 @@ object GatherNodeDialog {
       e => close >> Callback {
         p.cellView.map(_.model.attributes.nodeMetadata = new NodeMetadata(Base64.getEncoder.encodeToString(S.nodeData.toByteArray), ""))
       } >> Callback.info("Submit Clicked")
-
 
     val actions = (p: Props, S: State) => js.Array(
       MuiFlatButton(key = "1",
@@ -53,7 +48,7 @@ object GatherNodeDialog {
     def render(P: Props, S: State) = {
       <.div(
         MuiDialog(
-          title = "Gather Node Dialog",
+          title = "Play Node Dialog",
           actions = actions(P, S),
           open = S.isOpen,
           onRequestClose = CallbackDebug.f1("onRequestClose")
@@ -67,7 +62,7 @@ object GatherNodeDialog {
               hintText = "Type number",
               defaultValue = S.nodeData.nodeId.toString,
               onBlur = onBlur(P, S, (n, in) => n.withNodeId(in)))(),
-            <.div(s"Node's Configuration:${S.nodeData}")
+            <.div(<.div(s"Node's Configuration:${S.nodeData}"))
           )
         )
       )
