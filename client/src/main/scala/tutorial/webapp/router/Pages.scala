@@ -57,7 +57,9 @@ object JointJsPage {
 
     def buildGraph() = {
       val paper = DiagramUtility.createPaperLayout("#paper", graph)
-      paper.on("cell:pointerclick", (cellView, event, _, _) => {
+      paper.on("element:pointerup", (cellView, event, _, _) => {
+
+        dom.console.log(event.target)
         open(cellView)
       })
 

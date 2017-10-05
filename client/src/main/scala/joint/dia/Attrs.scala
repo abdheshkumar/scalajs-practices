@@ -32,5 +32,9 @@ trait AttrStyle extends js.Object {
   var `ref-width`: js.UndefOr[Int | String] = js.undefined
   var `ref-height`: js.UndefOr[Int | String] = js.undefined
   var `text-anchor`: js.UndefOr[String] = js.undefined
+  var `ref-dx`: js.UndefOr[Int | Double] = js.undefined
+  var `ref-dy`: js.UndefOr[Int | Double] = js.undefined
   var `font-size`: js.UndefOr[Int] = js.undefined
+  var `stroke-width`: js.UndefOr[Int] = js.undefined
+  var cursor: js.UndefOr[String] = js.undefined
 }

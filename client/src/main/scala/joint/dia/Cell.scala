@@ -10,10 +10,12 @@ import scala.scalajs.js.annotation.{JSName, ScalaJSDefined}
 abstract trait Cell[OP <: Options, C <: Cell[OP, C]] extends js.Object {
   def attributes: OP
 
+  def id: String = js.native
+
   @JSName("clone")
   def copy(): C = js.native
 
-  def attr(attrs: String, value: String): js.native = js.native
+  def attr(attrs: String, value: js.UndefOr[String] = js.undefined): js.native = js.native
 }
 
 @ScalaJSDefined

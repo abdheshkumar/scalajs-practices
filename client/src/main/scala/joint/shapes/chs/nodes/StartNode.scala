@@ -23,24 +23,11 @@ object StartNode extends ExtenderOps {
   private val options = new ModelOptions {
     inPorts = js.Array[String]()
     outPorts = js.Array("out1")
-    ports = new PortOptions {
-      groups = new GroupOptions {
-        out = new Options {
-          attrs = new Attrs {
-            portBody = new AttrStyle {
-              fill = "#E74C3C"
-            }
-          }
-        }
-      }
-    }
-    attrs = new Attrs {
-      label = new AttrStyle {
-        text = "Start Node"
-        `ref-x` = .5
-        `ref-y` = .2
-      }
-    }
+    attrs = js.Dictionary(".label" -> new AttrStyle {
+      text = "Start Node"
+      `ref-x` = .5
+      `ref-y` = .2
+    })
   }
   private val startClass = BaseNode.extender.define("chs.StartNode", options, new StartNodePrototypeProperties)
 

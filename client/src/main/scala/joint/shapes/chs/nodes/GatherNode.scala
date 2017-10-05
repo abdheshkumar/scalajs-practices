@@ -23,24 +23,11 @@ object GatherNode extends ExtenderOps {
   private val options = new ModelOptions {
     inPorts = js.Array[String]("in")
     outPorts = js.Array("out1")
-    ports = new PortOptions {
-      groups = new GroupOptions {
-        out = new Options {
-          attrs = new Attrs {
-            portBody = new AttrStyle {
-              fill = "#E74C3C"
-            }
-          }
-        }
-      }
-    }
-    attrs = new Attrs {
-      label = new AttrStyle {
-        text = "Gather Node"
-        `ref-x` = .5
-        `ref-y` = .2
-      }
-    }
+    attrs = js.Dictionary(".label" -> new AttrStyle {
+      text = "Gather Node"
+      `ref-x` = .5
+      `ref-y` = .2
+    })
   }
   private val gatherClass = BaseNode.extender.define("chs.GatherNode", options, new GatherNodePrototypeProperties)
 

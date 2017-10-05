@@ -10,7 +10,7 @@ import scala.scalajs.js.annotation.JSGlobal
 class Graph extends js.Object {
   def addCell[OP <: Options, C <: Cell[OP, C]](cell: C): Graph = js.native
 
-  def getConnectedLinks(model: Model, boundProps: BoundProps): js.Array[Model] = js.native
+  def getConnectedLinks(model: Model, boundProps: js.UndefOr[BoundProps] = js.undefined): js.Array[Model] = js.native
 
   def toJSON(): js.Object = js.native
 

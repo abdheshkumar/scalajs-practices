@@ -25,7 +25,7 @@ trait Options extends js.Object {
   var angel: js.UndefOr[Int] = js.undefined
   var id: js.UndefOr[String] = js.undefined
   val `type`: js.UndefOr[String] = js.undefined
-  var attrs: js.UndefOr[Attrs] = js.undefined
+  var attrs: js.UndefOr[js.Dictionary[AttrStyle]] = js.undefined
 }
 
 @ScalaJSDefined

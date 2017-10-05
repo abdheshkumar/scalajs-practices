@@ -1,13 +1,13 @@
 package joint.dia
 
-import joint.shapes.devs.{Model, ModelOptions}
+import joint.V
 import org.scalajs.jquery.jQuery
 
 import scala.scalajs.js
 
 object DiagramUtility {
-  def createPaperLayout(selector: String,graph: Graph): Paper = {
-    val paper = new Paper(new PaperOptions {
+  def createPaperLayout(selector: String, graph: Graph): Paper = {
+    new Paper(new PaperOptions {
       el = jQuery(selector)
       width = 800
       height = 600
@@ -20,70 +20,38 @@ object DiagramUtility {
       })
       markAvailable = true
       linkPinning = false
-      validateConnection = js.defined((cellViewS, magnetS, cellViewT, magnetT, end, linkView) => {
-        val port = magnetS.getAttribute("port")
-        val links = graph.getConnectedLinks(cellViewS.model, new BoundProps {
-          outbound = true
-        }).filter(_.get("source").port == port)
-
-        if (!js.isUndefined(magnetS) && magnetS.getAttribute("port-group") == "in") false
-        else if (links.length > 1) false
-        else !js.isUndefined(magnetT) && magnetT.getAttribute("port-group") == "in"
-      })
-    })
-    paper
-  }
-
-  def callNode(nodeType:String,inPorts0: js.Array[String],
-               outPorts0: js.Array[String],
-               nodeName: String): Model = {
-
-    val attrs0 = new Attrs {
-      label = new AttrStyle {
-        text = nodeName
-        `ref-x` = .5
-        `ref-y` = .2
-      }
-      rect = new AttrStyle {
-        fill = "#2ECC71"
-      }
-    }
-
-    val in0 = new Attrs {
-      portBody = new AttrStyle {
-        fill = "#16A085"
-        magnet = "passive"
-      }
-    }
-
-    val out0 = new Attrs {
-      portBody = new AttrStyle {
-        fill = "#E74C3C"
-      }
-    }
-
-    Model(new ModelOptions {
-      position = new Position {
-        x = 50
-        y = 150
-      }
-      size = new Size {
-        width = 90
-        height = 90
-      }
-      outPorts = outPorts0
-      inPorts = inPorts0
-      ports = new PortOptions {
-        groups = new GroupOptions {
-          in = new Options {
-            attrs = in0
-          }
-          out = new Options {
-            attrs = out0
-          }
-        }
-      }
-      attrs = attrs0
+      validateConnection = js.defined(validateConnections(graph))
+      validateMagnet = js.defined(validateMagnets(graph))
     })
   }
+
+  private def validateMagnets(graph: Graph)(cellView: CellView, magnet: Element) = {
+    val portId = V(magnet).attr("port")
+    val cell = cellView.model
+    val links = graph.getConnectedLinks(cell).filter { link =>
+      val source = link.get("source")
+      val target = link.get("target")
+      source.id == cell.id && source.port == portId ||
+        target.id == cell.id && target.port == portId
+    }.length
+    magnet.getAttribute("magnet") != "passive" && links < 1
+  }
+
+  private def validateConnections(graph: Graph)
+                                 (cellViewS: CellView,
+                                  magnetS: Element,
+                                  cellViewT: CellView,
+                                  magnetT: Element,
+                                  end: String,
+                                  linkView: LinkView): Boolean = {
+    val port = magnetS.getAttribute("port")
+    val links = graph.getConnectedLinks(cellViewS.model, new BoundProps {
+      outbound = true
+    }).filter(_.get("source").port == port)
+
+    if (!js.isUndefined(magnetS) && magnetS.getAttribute("port-group") == "in") false
+    else if (links.length > 1) false
+    else !js.isUndefined(magnetT) && magnetT.getAttribute("port-group") == "in"
+  }
+
 }
