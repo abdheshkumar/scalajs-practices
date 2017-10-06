@@ -37,4 +37,6 @@ trait AttrStyle extends js.Object {
   var `font-size`: js.UndefOr[Int] = js.undefined
   var `stroke-width`: js.UndefOr[Int] = js.undefined
   var cursor: js.UndefOr[String] = js.undefined
+  var d: js.UndefOr[String] = js.undefined
+  var transform: js.UndefOr[String] = js.undefined
 }

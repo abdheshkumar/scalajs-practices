@@ -3,17 +3,20 @@ package tutorial.webapp.router
 import chandu0101.scalajs.react.components.materialui.MuiMuiThemeProvider
 import diode.react.ModelProxy
 import japgolly.scalajs.react.extra.router.{RouterConfigDsl, RouterCtl}
-import japgolly.scalajs.react.vdom.TagOf
+import japgolly.scalajs.react.vdom.{TagOf, html_<^}
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.{BackendScope, Callback, _}
 import joint.dia._
-import joint.shapes.chs.nodes.{GatherNode, PlayNode, StartNode}
+import joint.shapes.chs.dialogs.PlayNodeDialog
+import joint.shapes.chs.nodes.BaseNode.BaseNodePrototypeProperties
+import joint.shapes.chs.nodes.{BaseNode, GatherNode, PlayNode, StartNode}
 import joint.shapes.devs._
 import org.scalajs.dom
 import org.scalajs.dom.html.Div
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
+import scala.scalajs.js.annotation.ScalaJSDefined
 
 
 sealed trait AppPage
@@ -56,27 +59,29 @@ object JointJsPage {
     val graph = new Graph()
 
     def buildGraph() = {
+
+
+      val m1 = BaseNode()
       val paper = DiagramUtility.createPaperLayout("#paper", graph)
-      paper.on("element:pointerup", (cellView, event, _, _) => {
+      /* paper.on("element:pointerup", (cellView, event, _, _) => {
 
-        dom.console.log(event.target)
-        open(cellView)
-      })
+         dom.console.log(event.target)
+         open(cellView)
+       })*/
 
 
-      val m1 = StartNode()
       val m2 = PlayNode()
-      val m3 = GatherNode()
+      //val m3 = GatherNode()
       m2.translate(300, 0)
-      m3.translate(0, 200)
+      //m3.translate(0, 200)
       graph.addCell[ModelOptions, Model](m1)
       graph.addCell[ModelOptions, Model](m2)
-      graph.addCell[ModelOptions, Model](m3)
+      //graph.addCell[ModelOptions, Model](m3)
     }
 
     val close = $.modState(_.copy(isOpen = false))
 
-    private def open(cellView: CellView) = {
+    private def open(cellView: CellView): Unit = {
       ($.setState(State(true, cellView)) >> Callback.log("Dialog Open")).runNow()
     }
 

@@ -18,6 +18,8 @@ trait PaperOptions extends js.Object {
   var defaultLink: js.UndefOr[Link] = js.undefined
   var linkPinning: js.UndefOr[Boolean] = js.undefined
   var validateConnection: js.UndefOr[VCFunction] = js.undefined
+  var cellViewNamespace: js.UndefOr[String] = js.undefined
+  var elementView: js.UndefOr[Dynamic] = js.undefined
   var validateMagnet: js.UndefOr[js.Function2[CellView, Element, Boolean]] = js.undefined
 }
 

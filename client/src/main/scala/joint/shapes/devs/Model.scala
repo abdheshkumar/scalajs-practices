@@ -31,6 +31,8 @@ trait Model extends Generic[ModelOptions, Model] {
   def openDialog(cellView: CellView): Unit = js.native
 
   def dialog(props: Props): VdomElement = js.native
+
+  val markup: String = js.native
 }
 
 

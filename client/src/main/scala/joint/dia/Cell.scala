@@ -25,6 +25,10 @@ trait PrototypeProperties extends js.Object {
 }
 
 @ScalaJSDefined
+trait DialogModelHandler extends js.Object {
+
+}
+@ScalaJSDefined
 trait StaticProperties extends js.Object {
 
 }
